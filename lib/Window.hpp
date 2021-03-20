@@ -31,18 +31,23 @@ class Window {
     void renderer_reset();
 
     // SURFACES
-    void render_surface(Surface*, bool = false);
+    std::shared_ptr<Surface> load_surface_from_bmp(std::string, std::string);
+    std::shared_ptr<Surface> load_surface_from_png(std::string, std::string);
+    void render_surface(std::string, bool = false);
 
     // TEXTURES
-    void render_texture(Texture*);
-    void render_rectangle(int, int, int, int, Color);
-    void render_rectangle_outline(int, int, int, int, Color);
+    std::shared_ptr<Texture> surface_to_texture(std::string);
+    void render_texture(std::string, SDL_Rect* = NULL);
+
+    // GEOMETRIES
+    void render_rectangle(SDL_Rect*, Color);
+    void render_rectangle_outline(SDL_Rect*, Color);
     void render_line(int, int, int, int, Color);
     void render_point(int, int, Color);
 
     // GETTERS
-    SDL_PixelFormat* surface_pixel_format();
-    SDL_Renderer* sdl_renderer_p();
+    std::shared_ptr<Surface> surface(std::string);
+    std::shared_ptr<Texture> texture(std::string);
 
   private:
     SDL_Window* $sdl_p;
@@ -51,6 +56,8 @@ class Window {
     std::string $title;
     int $width;
     int $height;
+    std::unordered_map<std::string, std::shared_ptr<Surface>> $surfaces;
+    std::unordered_map<std::string, std::shared_ptr<Texture>> $textures;
 };
 
 #endif

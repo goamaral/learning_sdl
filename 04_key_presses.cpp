@@ -2,20 +2,20 @@
 
 int main(int argc, char** args) {
   System system;
-  system.init(SDL_INIT_VIDEO);
-  system.create_window("main", "SDL Tutorial", 640, 480);
+  system.init();
+  std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", 640, 480);
 
   try {
-    system.load_surface_from_bmp("resources/images/default.bmp", "default", "main");
-    system.load_surface_from_bmp("resources/images/up.bmp", "up", "main");
-    system.load_surface_from_bmp("resources/images/down.bmp", "down", "main");
-    system.load_surface_from_bmp("resources/images/left.bmp", "left", "main");
-    system.load_surface_from_bmp("resources/images/right.bmp", "right", "main");
+    main_window_p->load_surface_from_bmp("resources/images/default.bmp", "default");
+    main_window_p->load_surface_from_bmp("resources/images/up.bmp", "up");
+    main_window_p->load_surface_from_bmp("resources/images/down.bmp", "down");
+    main_window_p->load_surface_from_bmp("resources/images/left.bmp", "left");
+    main_window_p->load_surface_from_bmp("resources/images/right.bmp", "right");
   } catch (std::string) {
     return 1;
   }
 
-  system.render_surface("main", "default");
+  main_window_p->render_surface("default");
 
   SDL_Event event;
   bool running = true;
@@ -35,23 +35,23 @@ int main(int argc, char** args) {
             break;
 
           case SDLK_UP:
-            system.render_surface("main", "up");
+            main_window_p->render_surface("up");
             break;
 
           case SDLK_DOWN:
-            system.render_surface("main", "down");
+            main_window_p->render_surface("down");
             break;
 
           case SDLK_LEFT:
-            system.render_surface("main", "left");
+            main_window_p->render_surface("left");
             break;
 
           case SDLK_RIGHT:
-            system.render_surface("main", "right");
+            main_window_p->render_surface("right");
             break;
 
           default:
-            system.render_surface("main", "default");
+            main_window_p->render_surface("default");
             break;
         }
       break;

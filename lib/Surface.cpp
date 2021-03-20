@@ -61,6 +61,11 @@ void Surface::copy(SDL_Surface* source_surface_p, SDL_Surface* destination_surfa
 }
 
 // INSTANCE METHODS
+void Surface::set_color_key(bool enable, Color color) {
+  int enable_flag = enable ? SDL_TRUE : SDL_FALSE;
+  int result = SDL_SetColorKey($sdl_p, enable_flag, SDL_MapRGB($sdl_p->format, color.red, color.green, color.blue));
+  SDL_assert(result == 0);
+}
 
 // GETTERS
 SDL_Surface* Surface::sdl_p() {

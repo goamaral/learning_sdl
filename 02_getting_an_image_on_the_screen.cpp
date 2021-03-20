@@ -2,16 +2,16 @@
 
 int main(int argc, char** args) {
   System system;
-  system.init(SDL_INIT_VIDEO);
-  system.create_window("main", "SDL Tutorial", 640, 480);
+  system.init();
+  std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", 640, 480);
 
   try {
-    system.load_surface_from_bmp("resources/images/hello_world.bmp", "hello_world", "main");
+    main_window_p->load_surface_from_bmp("resources/images/hello_world.bmp", "hello_world");
   } catch (std::string) {
     return 1;
   }
 
-  system.render_surface("main", "hello_world");
+  main_window_p->render_surface("hello_world");
   system.delay(2000);
 
   return 0;

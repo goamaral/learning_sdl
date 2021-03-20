@@ -2,7 +2,7 @@
 
 int main(int argc, char** args) {
   System system;
-  system.init(SDL_INIT_VIDEO);
+  system.init();
   system.create_window("main", "SDL Tutorial", 640, 480);
 
   SDL_Event event;

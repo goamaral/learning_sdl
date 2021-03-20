@@ -7,6 +7,9 @@ Window::Window() {
 }
 
 Window::~Window() {
+  $surfaces.clear();
+  $textures.clear();
+
   if ($sdl_surface_p) SDL_FreeSurface($sdl_surface_p);
   if ($sdl_renderer_p) SDL_DestroyRenderer($sdl_renderer_p);
   if ($sdl_p) SDL_DestroyWindow($sdl_p);
@@ -44,8 +47,8 @@ void Window::renderer_set_draw_color(Color color) {
   SDL_assert(result == 0);
 }
 
-void Window::renderer_set_viewport(SDL_Rect* viewport_rect) {
-  int result = SDL_RenderSetViewport($sdl_renderer_p, viewport_rect);
+void Window::renderer_set_viewport(SDL_Rect* render_rectangle_p) {
+  int result = SDL_RenderSetViewport($sdl_renderer_p, render_rectangle_p);
   SDL_assert(result == 0);
 }
 
@@ -61,7 +64,23 @@ void Window::renderer_reset() {
 }
 
 // SURFACES
-void Window::render_surface(Surface* surface_p, bool scaled) {
+std::shared_ptr<Surface> Window::load_surface_from_bmp(std::string image_location, std::string key) {
+  std::shared_ptr<Surface> surface_p(Surface::load_from_bmp(image_location, $sdl_surface_p->format));
+  $surfaces.insert({ key, surface_p });
+
+  return surface_p;
+}
+
+std::shared_ptr<Surface> Window::load_surface_from_png(std::string image_location, std::string key) {
+  std::shared_ptr<Surface> surface_p(Surface::load_from_png(image_location, $sdl_surface_p->format));
+  $surfaces.insert({key, surface_p});
+
+  return surface_p;
+}
+
+void Window::render_surface(std::string surface_key, bool scaled) {
+  std::shared_ptr<Surface> surface_p = $surfaces.at(surface_key);
+
   if (scaled) {
     Surface::copy_scaled(surface_p->sdl_p(), $sdl_surface_p);
   } else {
@@ -73,46 +92,54 @@ void Window::render_surface(Surface* surface_p, bool scaled) {
 }
 
 // TEXTURES
-void Window::render_texture(Texture* texture_p) {
-  int result = SDL_RenderCopy($sdl_renderer_p, texture_p->sdl_p(), NULL, NULL);
+std::shared_ptr<Texture> Window::surface_to_texture(std::string key) {
+  std::shared_ptr<Surface> surface_p = $surfaces.at(key);
+  SDL_Texture* sdl_texture_p = SDL_CreateTextureFromSurface($sdl_renderer_p, surface_p->sdl_p());
+  SDL_assert(sdl_texture_p != NULL);
+  $surfaces.erase(key);
+
+  std::shared_ptr<Texture> texture_p(new Texture(sdl_texture_p, surface_p->width(), surface_p->height()));
+  $textures.insert({key, texture_p});
+
+  return texture_p;
+}
+
+void Window::render_texture(std::string key, SDL_Rect* render_rectangle_p) {
+  std::shared_ptr<Texture> texture_p = $textures.at(key);
+  int result = SDL_RenderCopy($sdl_renderer_p, texture_p->sdl_p(), NULL, render_rectangle_p);
   SDL_assert(result == 0);
 }
 
-void Window::render_rectangle(int x, int y, int width, int height, Color color) {
-  SDL_Rect rectangle = { x, y, width, height };
+// GEOMETRIES
+void Window::render_rectangle(SDL_Rect* render_rectangle_p, Color color) {
   renderer_set_draw_color(color);
-
-  int result = SDL_RenderFillRect($sdl_renderer_p, &rectangle);
+  int result = SDL_RenderFillRect($sdl_renderer_p, render_rectangle_p);
   SDL_assert(result == 0);
 }
 
-void Window::render_rectangle_outline(int x, int y, int width, int height, Color color) {
-  SDL_Rect rectangle = { x, y, width, height };
+void Window::render_rectangle_outline(SDL_Rect* render_rectangle_p, Color color) {
   renderer_set_draw_color(color);
-
-  int result = SDL_RenderDrawRect($sdl_renderer_p, &rectangle);
+  int result = SDL_RenderDrawRect($sdl_renderer_p, render_rectangle_p);
   SDL_assert(result == 0);
 }
 
 void Window::render_line(int x1, int y1, int x2, int y2, Color color) {
   renderer_set_draw_color(color);
-
   int result = SDL_RenderDrawLine($sdl_renderer_p, x1, y1, x2, y2);
   SDL_assert(result == 0);
 }
 
 void Window::render_point(int x, int y, Color color) {
   renderer_set_draw_color(color);
-
   int result = SDL_RenderDrawPoint($sdl_renderer_p, x, y);
   SDL_assert(result == 0);
 }
 
 // GETTERS
-SDL_PixelFormat* Window::surface_pixel_format() {
-  return $sdl_surface_p->format;
+std::shared_ptr<Surface> Window::surface(std::string key) {
+  return $surfaces.at(key);
 }
 
-SDL_Renderer* Window::sdl_renderer_p() {
-  return $sdl_renderer_p;
+std::shared_ptr<Texture> Window::texture(std::string key) {
+  return $textures.at(key);
 }

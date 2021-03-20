@@ -2,18 +2,22 @@
 
 int main(int argc, char** args) {
   System system;
-  system.init(SDL_INIT_VIDEO);
-  system.create_window("main", "SDL Tutorial", 640, 480);
+  system.init();
+  system.init_png_img();
+  std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", 640, 480);
 
   try {
-    system.load_texture_from_png("resources/images/texture.png", "texture", "main");
+    main_window_p->load_surface_from_png("resources/images/texture.png", "texture");
   } catch (std::string) {
     return 1;
   }
 
-  system.window("main")->renderer_reset();
-  system.render_texture("main", "texture");
-  system.window("main")->renderer_render();
+  main_window_p->surface_to_texture("texture");
+
+  main_window_p->renderer_reset();
+    main_window_p->render_texture("texture");
+  main_window_p->renderer_render();
+
   system.delay(2000);
 
   return 0;

@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS=-Wall
 LDLIBS=-L./lib -lEngine -I./lib -lSDL2 -lSDL2_image
 
-all: 02 03 04 05 06 07 08
+all: 02 03 04 05 06 07 08 09 10
 
 engine:
 	(cd ./lib && make)
@@ -30,6 +30,9 @@ engine:
 
 09: engine
 	$(CXX) 09_the_viewport.cpp -o 09_the_viewport $(LDLIBS) $(CXXFLAGS)
+
+10: engine
+	$(CXX) 10_color_keying.cpp -o 10_color_keying $(LDLIBS) $(CXXFLAGS)
 
 14: engine
 	$(CXX) 14_animated_sprites_and_vsync.cpp Window.cpp Texture.cpp Surface.cpp -o 14 $(LDLIBS) $(CXXFLAGS)

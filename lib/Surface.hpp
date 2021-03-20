@@ -10,6 +10,8 @@
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_image.h>
 
+#include "Color.hpp"
+
 class Surface {
   public:
     SDL_Surface* $sdl_p;
@@ -25,6 +27,7 @@ class Surface {
     static void copy(SDL_Surface*, SDL_Surface*);
 
     // INSTANCE METHODS
+    void set_color_key(bool, Color = Color(0));
 
     // GETTERS
     SDL_Surface* sdl_p();
