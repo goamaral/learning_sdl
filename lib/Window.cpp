@@ -104,9 +104,16 @@ std::shared_ptr<Texture> Window::surface_to_texture(std::string key) {
   return texture_p;
 }
 
-void Window::render_texture(std::string key, SDL_Rect* render_rectangle_p) {
+void Window::render_texture(std::string key, int x, int y, SDL_Rect* source_rectangle_p) {
   std::shared_ptr<Texture> texture_p = $textures.at(key);
-  int result = SDL_RenderCopy($sdl_renderer_p, texture_p->sdl_p(), NULL, render_rectangle_p);
+  SDL_Rect destination_rectangle = { x, y, texture_p->width(), texture_p->height() };
+
+  if (source_rectangle_p != NULL) {
+    destination_rectangle.w = source_rectangle_p->w;
+    destination_rectangle.h = source_rectangle_p->h;
+  }
+
+  int result = SDL_RenderCopy($sdl_renderer_p, texture_p->sdl_p(), source_rectangle_p, &destination_rectangle);
   SDL_assert(result == 0);
 }
 

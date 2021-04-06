@@ -22,9 +22,7 @@ int main(int argc, char** args) {
 
   main_window_p->renderer_reset();
     main_window_p->render_texture("background");
-
-    SDL_Rect render_rectangle = { 240, 190, player_texture_p->width(), player_texture_p->height() };
-    main_window_p->render_texture("player", &render_rectangle);
+    main_window_p->render_texture("player", 240, 190);
   main_window_p->renderer_render();
 
   system.delay(2000);

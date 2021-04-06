@@ -37,7 +37,7 @@ class Window {
 
     // TEXTURES
     std::shared_ptr<Texture> surface_to_texture(std::string);
-    void render_texture(std::string, SDL_Rect* = NULL);
+    void render_texture(std::string, int = 0, int = 0, SDL_Rect* = NULL);
 
     // GEOMETRIES
     void render_rectangle(SDL_Rect*, Color);

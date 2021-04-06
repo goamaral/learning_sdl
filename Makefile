@@ -34,5 +34,8 @@ engine:
 10: engine
 	$(CXX) 10_color_keying.cpp -o 10_color_keying $(LDLIBS) $(CXXFLAGS)
 
+11: engine
+	$(CXX) 11_clip_rendering_and_sprite_sheets.cpp -o 11_clip_rendering_and_sprite_sheets $(LDLIBS) $(CXXFLAGS)
+
 14: engine
 	$(CXX) 14_animated_sprites_and_vsync.cpp Window.cpp Texture.cpp Surface.cpp -o 14 $(LDLIBS) $(CXXFLAGS)
