@@ -2,7 +2,7 @@ CXX=g++
 CXXFLAGS=-Wall
 LDLIBS=-L./lib -lEngine -I./lib -lSDL2 -lSDL2_image
 
-all: 02 03 04 05 06 07 08 09 10 11 12
+all: 02 03 04 05 06 07 08 09 10 11 12 13
 
 engine:
 	(cd ./lib && make)
@@ -39,6 +39,9 @@ engine:
 
 12: engine
 	$(CXX) 12_color_modulation.cpp -o 12_color_modulation $(LDLIBS) $(CXXFLAGS)
+
+13: engine
+	$(CXX) 13_alpha_blending.cpp -o 13_alpha_blending $(LDLIBS) $(CXXFLAGS)
 
 14: engine
 	$(CXX) 14_animated_sprites_and_vsync.cpp Window.cpp Texture.cpp Surface.cpp -o 14 $(LDLIBS) $(CXXFLAGS)

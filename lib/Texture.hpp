@@ -20,7 +20,9 @@ class Texture {
       // STATIC METHODS
 
       // INSTANCE METHODS
-      void set_color_modulation(Color color);
+      void set_color_modulation(Color);
+      void set_blend_mode(SDL_BlendMode);
+      void set_alpha_modulation(Uint8);
 
       // GETTERS
       SDL_Texture* sdl_p();
