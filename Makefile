@@ -44,4 +44,4 @@ engine:
 	$(CXX) 13_alpha_blending.cpp -o 13_alpha_blending $(LDLIBS) $(CXXFLAGS)
 
 14: engine
-	$(CXX) 14_animated_sprites_and_vsync.cpp Window.cpp Texture.cpp Surface.cpp -o 14 $(LDLIBS) $(CXXFLAGS)
+	$(CXX) 14_animated_sprites_and_vsync.cpp -o 14_animated_sprites_and_vsync $(LDLIBS) $(CXXFLAGS)
