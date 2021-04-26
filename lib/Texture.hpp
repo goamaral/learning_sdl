@@ -10,6 +10,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "Surface.hpp"
+#include "Color.hpp"
 
 class Texture {
   public:
@@ -19,6 +20,7 @@ class Texture {
       // STATIC METHODS
 
       // INSTANCE METHODS
+      void set_color_modulation(Color color);
 
       // GETTERS
       SDL_Texture* sdl_p();

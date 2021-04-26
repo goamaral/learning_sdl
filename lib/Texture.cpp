@@ -13,6 +13,10 @@ Texture::~Texture() {
 // STATIC METHODS
 
 // INSTANCE METHODS
+void Texture::set_color_modulation(Color color) {
+  int result = SDL_SetTextureColorMod($sdl_p, color.red, color.green, color.blue);
+  SDL_assert(result == 0);
+}
 
 // GETTERS
 SDL_Texture* Texture::sdl_p() {

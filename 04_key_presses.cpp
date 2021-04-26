@@ -21,40 +21,40 @@ int main(int argc, char** args) {
   bool running = true;
 
   while (running) {
-    SDL_PollEvent(&event);
+    if (SDL_PollEvent(&event)) {
+      switch (event.type) {
+        case SDL_QUIT:
+          running = false;
+          break;
 
-    switch (event.type) {
-      case SDL_QUIT:
-        running = false;
+        case SDL_KEYDOWN:
+          switch(event.key.keysym.sym) {
+            case SDLK_ESCAPE:
+              running =  false;
+              break;
+
+            case SDLK_UP:
+              main_window_p->render_surface("up");
+              break;
+
+            case SDLK_DOWN:
+              main_window_p->render_surface("down");
+              break;
+
+            case SDLK_LEFT:
+              main_window_p->render_surface("left");
+              break;
+
+            case SDLK_RIGHT:
+              main_window_p->render_surface("right");
+              break;
+
+            default:
+              main_window_p->render_surface("default");
+              break;
+          }
         break;
-
-      case SDL_KEYDOWN:
-        switch(event.key.keysym.sym) {
-          case SDLK_ESCAPE:
-            running =  false;
-            break;
-
-          case SDLK_UP:
-            main_window_p->render_surface("up");
-            break;
-
-          case SDLK_DOWN:
-            main_window_p->render_surface("down");
-            break;
-
-          case SDLK_LEFT:
-            main_window_p->render_surface("left");
-            break;
-
-          case SDLK_RIGHT:
-            main_window_p->render_surface("right");
-            break;
-
-          default:
-            main_window_p->render_surface("default");
-            break;
-        }
-      break;
+      }
     }
   }
 
