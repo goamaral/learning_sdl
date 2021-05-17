@@ -64,14 +64,11 @@ int main(int argc, char** args) {
 
     current_frame = current_frame % WALKING_ANIMATION_FRAMES;
     SDL_Rect* current_frame_rect_p = &walking_frame_rects[current_frame];
+    int x = (window_width - current_frame_rect_p->w) / 2;
+    int y = (window_height - current_frame_rect_p->h) / 2;
 
     main_window_p->renderer_reset();
-      main_window_p->render_texture(
-        "walking",
-        (window_width - current_frame_rect_p->w) / 2,
-        (window_height - current_frame_rect_p->h) / 2,
-        current_frame_rect_p
-      );
+      main_window_p->render_texture("walking", x, y, current_frame_rect_p);
     main_window_p->renderer_render();
 
     current_frame += 1;
