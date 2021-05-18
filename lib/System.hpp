@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_assert.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Window.hpp"
 
@@ -23,6 +24,7 @@ class System {
     // GENERAL
     void init();
     void init_png_img();
+    void init_ttf_font();
     void delay(Uint32);
 
     // WINDOWS
@@ -35,6 +37,7 @@ class System {
       bool $sdl_inited;
       bool $sdl_img_inited;
       bool $sdl_png_img_inited;
+      bool $sdl_ttf_font_inited;
       std::unordered_map<std::string, std::shared_ptr<Window>> $windows;
     };
 

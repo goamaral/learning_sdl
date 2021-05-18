@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-Wall
-LDLIBS=-L./lib -lEngine -I./lib -lSDL2 -lSDL2_image
+LDLIBS=-L./lib -lEngine -I./lib -lSDL2 -lSDL2_image -lSDL2_ttf
 
 all: 02 03 04 05 06 07 08 09 10 11 12 13 14 15
 

@@ -7,10 +7,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_assert.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Texture.hpp"
 #include "Surface.hpp"
 #include "Color.hpp"
+#include "Font.hpp"
 
 class Window {
   public:
@@ -33,7 +35,11 @@ class Window {
     // SURFACES
     std::shared_ptr<Surface> load_surface_from_bmp(std::string, std::string);
     std::shared_ptr<Surface> load_surface_from_png(std::string, std::string);
+    std::shared_ptr<Surface> load_surface_from_font(std::string, std::string, std::string, Color = Color());
     void render_surface(std::string, bool = false);
+
+    // FONTS
+    std::shared_ptr<Font> load_font_from_ttf(std::string, std::string, int = 16);
 
     // TEXTURES
     std::shared_ptr<Texture> surface_to_texture(std::string);
@@ -48,6 +54,7 @@ class Window {
     // GETTERS
     std::shared_ptr<Surface> surface(std::string);
     std::shared_ptr<Texture> texture(std::string);
+    std::shared_ptr<Font> font(std::string);
 
   private:
     SDL_Window* $sdl_p;
@@ -58,6 +65,7 @@ class Window {
     int $height;
     std::unordered_map<std::string, std::shared_ptr<Surface>> $surfaces;
     std::unordered_map<std::string, std::shared_ptr<Texture>> $textures;
+    std::unordered_map<std::string, std::shared_ptr<Font>> $fonts;
 };
 
 #endif

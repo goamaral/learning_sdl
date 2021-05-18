@@ -9,6 +9,7 @@ Window::Window() {
 Window::~Window() {
   $surfaces.clear();
   $textures.clear();
+  $fonts.clear();
 
   if ($sdl_surface_p) SDL_FreeSurface($sdl_surface_p);
   if ($sdl_renderer_p) SDL_DestroyRenderer($sdl_renderer_p);
@@ -78,6 +79,22 @@ std::shared_ptr<Surface> Window::load_surface_from_png(std::string image_locatio
   return surface_p;
 }
 
+std::shared_ptr<Surface> Window::load_surface_from_font(std::string key, std::string font_key, std::string text, Color color) {
+  std::shared_ptr<Font> font_p = $fonts.at(font_key);
+
+  SDL_Surface* sdl_surface_p = TTF_RenderText_Solid(font_p->sdl_p(), text.c_str(), color.sdl());
+  if (sdl_surface_p == NULL) {
+    const char* error_message = SDL_GetError();
+    SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error_message);
+    throw std::string(error_message);
+  }
+
+  std::shared_ptr<Surface> surface_p(new Surface(sdl_surface_p));
+  $surfaces.insert({key, surface_p});
+
+  return surface_p;
+}
+
 void Window::render_surface(std::string surface_key, bool scaled) {
   std::shared_ptr<Surface> surface_p = $surfaces.at(surface_key);
 
@@ -91,12 +108,26 @@ void Window::render_surface(std::string surface_key, bool scaled) {
   SDL_assert(result == 0);
 }
 
+// FONTS
+std::shared_ptr<Font> Window::load_font_from_ttf(std::string font_location, std::string key, int font_size) {
+  TTF_Font* sdl_font_p = TTF_OpenFont(font_location.c_str(), font_size);
+  if (sdl_font_p == NULL) {
+    const char* error_message = SDL_GetError();
+    SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error_message);
+    throw std::string(error_message);
+  }
+
+  std::shared_ptr<Font> font_p(new Font(sdl_font_p));
+  $fonts.insert({key, font_p});
+
+  return font_p;
+}
+
 // TEXTURES
 std::shared_ptr<Texture> Window::surface_to_texture(std::string key) {
   std::shared_ptr<Surface> surface_p = $surfaces.at(key);
   SDL_Texture* sdl_texture_p = SDL_CreateTextureFromSurface($sdl_renderer_p, surface_p->sdl_p());
   SDL_assert(sdl_texture_p != NULL);
-  $surfaces.erase(key);
 
   std::shared_ptr<Texture> texture_p(new Texture(sdl_texture_p, surface_p->width(), surface_p->height()));
   $textures.insert({key, texture_p});
@@ -149,4 +180,8 @@ std::shared_ptr<Surface> Window::surface(std::string key) {
 
 std::shared_ptr<Texture> Window::texture(std::string key) {
   return $textures.at(key);
+}
+
+std::shared_ptr<Font> Window::font(std::string key) {
+  return $fonts.at(key);
 }

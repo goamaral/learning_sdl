@@ -14,8 +14,6 @@
 
 class Surface {
   public:
-    SDL_Surface* $sdl_p;
-
     Surface(SDL_Surface*);
     ~Surface();
 
@@ -35,6 +33,7 @@ class Surface {
     int height();
 
   private:
+    SDL_Surface* $sdl_p;
 };
 
 #endif

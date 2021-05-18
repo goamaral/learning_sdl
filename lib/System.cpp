@@ -8,6 +8,7 @@ System::System() {
 System::~System() {
   $windows.clear();
 
+  if ($sdl_ttf_font_inited) TTF_Quit();
   if ($sdl_img_inited) IMG_Quit();
   if ($sdl_inited) SDL_Quit();
 }
@@ -26,6 +27,13 @@ void System::init_png_img() {
     SDL_assert((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) == IMG_INIT_PNG);
     $sdl_png_img_inited = true;
     $sdl_img_inited = true;
+  }
+}
+
+void System::init_ttf_font() {
+  if (!$sdl_ttf_font_inited) {
+    SDL_assert(TTF_Init() == 0);
+    $sdl_ttf_font_inited = true;
   }
 }
 

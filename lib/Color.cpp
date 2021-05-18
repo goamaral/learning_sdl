@@ -1,5 +1,7 @@
 #include "Color.hpp"
 
+Color::Color() {}
+
 Color::Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
   red = r;
   green = g;
@@ -22,4 +24,11 @@ Color::Color(std::string color_name) {
   else if (color_name == "magenta") { red = 0XFF; blue = 0XFF; }
   else if (color_name == "cyan") { green = 0XFF; blue = 0XFF; }
   else if (color_name == "white") { red = 0XFF; green = 0XFF; blue = 0xFF; }
+}
+
+// INSTANCE METHODS
+// GETTERS
+SDL_Color Color::sdl() {
+  SDL_Color color = { red, green, blue, alpha };
+  return color;
 }
