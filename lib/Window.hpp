@@ -30,12 +30,12 @@ class Window {
     void renderer_set_draw_color(Color);
     void renderer_set_viewport(SDL_Rect*);
     void renderer_clear();
-    void renderer_reset();
+    void renderer_reset(Color = Color("white"));
 
     // SURFACES
     std::shared_ptr<Surface> load_surface_from_bmp(std::string, std::string);
     std::shared_ptr<Surface> load_surface_from_png(std::string, std::string);
-    std::shared_ptr<Surface> load_surface_from_font(std::string, std::string, std::string, Color = Color());
+    std::shared_ptr<Surface> font_to_surface(std::string, std::string, Color = Color("black"));
     void render_surface(std::string, bool = false);
 
     // FONTS

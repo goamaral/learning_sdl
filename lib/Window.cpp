@@ -58,8 +58,8 @@ void Window::renderer_clear() {
   SDL_assert(result == 0);
 }
 
-void Window::renderer_reset() {
-  renderer_set_draw_color(Color(0));
+void Window::renderer_reset(Color color) {
+  renderer_set_draw_color(color);
   renderer_set_viewport(NULL);
   renderer_clear();
 }
@@ -79,8 +79,8 @@ std::shared_ptr<Surface> Window::load_surface_from_png(std::string image_locatio
   return surface_p;
 }
 
-std::shared_ptr<Surface> Window::load_surface_from_font(std::string key, std::string font_key, std::string text, Color color) {
-  std::shared_ptr<Font> font_p = $fonts.at(font_key);
+std::shared_ptr<Surface> Window::font_to_surface(std::string key, std::string text, Color color) {
+  std::shared_ptr<Font> font_p = $fonts.at(key);
 
   SDL_Surface* sdl_surface_p = TTF_RenderText_Solid(font_p->sdl_p(), text.c_str(), color.sdl());
   if (sdl_surface_p == NULL) {
@@ -111,6 +111,7 @@ void Window::render_surface(std::string surface_key, bool scaled) {
 // FONTS
 std::shared_ptr<Font> Window::load_font_from_ttf(std::string font_location, std::string key, int font_size) {
   TTF_Font* sdl_font_p = TTF_OpenFont(font_location.c_str(), font_size);
+
   if (sdl_font_p == NULL) {
     const char* error_message = SDL_GetError();
     SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "%s", error_message);
