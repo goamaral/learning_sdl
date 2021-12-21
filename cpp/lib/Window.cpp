@@ -35,6 +35,7 @@ void Window::init(std::string title, int width, int height) {
   SDL_assert(result == 0);
 
   $sdl_surface_p = SDL_GetWindowSurface($sdl_p);
+  printf("ERROR: %s\n", SDL_GetError());
   SDL_assert($sdl_surface_p != NULL);
 }
 

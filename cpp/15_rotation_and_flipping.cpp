@@ -11,17 +11,19 @@ int main(int argc, char** args) {
   std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", window_width, window_height);
 
   try {
-    main_window_p->load_surface_from_png("resources/images/colors.png", "colors");
+    main_window_p->load_surface_from_png("../resources/images/arrow.png", "arrow");
   } catch (std::string) {
     return 1;
   }
 
-  main_window_p->surface_to_texture("colors");
-
-  Color color(255, 255, 255, 255);
+  std::shared_ptr<Texture> arrow_texture_p = main_window_p->surface_to_texture("arrow");
 
   SDL_Event event;
   bool running = true;
+  double degrees = 0;
+  SDL_RendererFlip flip = SDL_FLIP_NONE;
+  int x = (window_width - arrow_texture_p->width()) / 2;
+  int y = (window_height - arrow_texture_p->height()) / 2;
 
   while (running) {
     if (SDL_PollEvent(&event)) {
@@ -36,38 +38,32 @@ int main(int argc, char** args) {
               running = false;
               break;
 
-            case SDLK_q:
-              color.red = std::min(255, color.red + 32);
-              break;
-
             case SDLK_a:
-              color.red = std::max(0, color.red - 32);
-              break;
-
-            case SDLK_w:
-              color.green = std::min(255, color.green + 32);
-              break;
-
-            case SDLK_s:
-              color.green = std::max(0, color.green - 32);
-              break;
-
-            case SDLK_e:
-              color.blue = std::min(255, color.blue + 32);
+              degrees -= 60;
               break;
 
             case SDLK_d:
-              color.blue = std::max(0, color.blue - 32);
+              degrees += 60;
+              break;
+
+            case SDLK_q:
+              flip = SDL_FLIP_HORIZONTAL;
+              break;
+
+            case SDLK_w:
+              flip = SDL_FLIP_NONE;
+              break;
+
+            case SDLK_e:
+              flip = SDL_FLIP_VERTICAL;
               break;
           }
-
-          main_window_p->texture("colors")->set_color_modulation(color);
           break;
       }
     }
 
     main_window_p->renderer_reset();
-      main_window_p->render_texture("colors");
+      main_window_p->render_texture("arrow", x, y, NULL, degrees, flip);
     main_window_p->renderer_render();
   }
 

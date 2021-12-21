@@ -1,0 +1,17 @@
+*.o
+*.a
+02_getting_an_image_on_the_screen
+03_event_driven_programming
+04_key_presses
+05_optimized_surface_loading_and_soft_stretching
+06_extension_libraries_and_loading_other_image_formats
+07_texture_loading_and_rendering
+08_geometry_rendering
+09_the_viewport
+10_color_keying
+11_clip_rendering_and_sprite_sheets
+12_color_modulation
+13_alpha_blending
+14_animated_sprites_and_vsync
+15_rotation_and_flipping
+16_true_type_fonts

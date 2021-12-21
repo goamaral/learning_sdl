@@ -9,7 +9,7 @@ int main(int argc, char** args) {
   std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", window_width, window_height);
 
   try {
-    main_window_p->load_surface_from_png("resources/images/texture.png", "viewport");
+    main_window_p->load_surface_from_png("../resources/images/texture.png", "viewport");
   } catch (std::string) {
     return 1;
   }

@@ -9,7 +9,7 @@ int main(int argc, char** args) {
   system.init_ttf_font();
   std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", window_width, window_height);
 
-  main_window_p->load_font_from_ttf("resources/fonts/lazy.ttf", "lazy", 24);
+  main_window_p->load_font_from_ttf("../resources/fonts/lazy.ttf", "lazy", 24);
   main_window_p->font_to_surface("lazy", "The quick brown fox jumps over the lazy dog");
   std::shared_ptr<Texture> lazy_texture_p = main_window_p->surface_to_texture("lazy");
 

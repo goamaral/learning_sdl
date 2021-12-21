@@ -6,11 +6,11 @@ int main(int argc, char** args) {
   std::shared_ptr<Window> main_window_p = system.create_window("main", "SDL Tutorial", 640, 480);
 
   try {
-    main_window_p->load_surface_from_bmp("resources/images/default.bmp", "default");
-    main_window_p->load_surface_from_bmp("resources/images/up.bmp", "up");
-    main_window_p->load_surface_from_bmp("resources/images/down.bmp", "down");
-    main_window_p->load_surface_from_bmp("resources/images/left.bmp", "left");
-    main_window_p->load_surface_from_bmp("resources/images/right.bmp", "right");
+    main_window_p->load_surface_from_bmp("../resources/images/default.bmp", "default");
+    main_window_p->load_surface_from_bmp("../resources/images/up.bmp", "up");
+    main_window_p->load_surface_from_bmp("../resources/images/down.bmp", "down");
+    main_window_p->load_surface_from_bmp("../resources/images/left.bmp", "left");
+    main_window_p->load_surface_from_bmp("../resources/images/right.bmp", "right");
   } catch (std::string) {
     return 1;
   }
