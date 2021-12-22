@@ -29,7 +29,7 @@ func main() {
 	}
 
 	for name, path := range surfacePaths {
-		surface := srf.LoadFromBmp(path, window.GetSurface().Format)
+		surface := srf.Load(path, window.GetSurface().Format)
 		eng.SaveSurface(name, &surface)
 	}
 

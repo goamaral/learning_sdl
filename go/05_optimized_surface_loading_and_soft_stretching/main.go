@@ -20,7 +20,7 @@ func main() {
 	window := win.Create()
 	defer window.Destroy()
 
-	surface := srf.LoadFromBmp("../resources/images/stretch.bmp", window.GetSurface().Format)
+	surface := srf.Load("../resources/images/stretch.bmp", window.GetSurface().Format)
 	eng.SaveSurface("stretch", &surface)
 
 	window.RenderSurface("stretch", false)
