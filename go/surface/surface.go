@@ -1,0 +1,33 @@
+package surface
+
+import (
+	"fmt"
+
+	"github.com/veandco/go-sdl2/sdl"
+)
+
+type Surface struct {
+	*sdl.Surface
+}
+
+// Load surface from bmp
+func LoadFromBmp(pixelFormat *sdl.PixelFormat) Surface {
+	surface, err := sdl.LoadBMP("../resources/images/hello_world.bmp")
+	if err != nil {
+		panic(err)
+	}
+
+	optimezedSurface, err := optimizeSurface(surface, pixelFormat)
+	if err != nil {
+		fmt.Println("Failed to optimize surface")
+		return Surface{surface}
+	} else {
+		surface.Free()
+		return Surface{optimezedSurface}
+	}
+}
+
+// Optimize surface
+func optimizeSurface(surface *sdl.Surface, pixelFormat *sdl.PixelFormat) (*sdl.Surface, error) {
+	return surface.Convert(pixelFormat, 0)
+}
