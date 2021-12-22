@@ -23,9 +23,7 @@ func main() {
 	surface := srf.LoadFromBmp("../resources/images/hello_world.bmp", window.GetSurface().Format)
 	eng.SaveSurface("helloWorld", &surface)
 
-	window.RenderRawSurface(&surface)
-
-	eng.Loop(func(event sdl.Event) bool {
-		return true
-	})
+	window.RenderSurface("helloWorld", false)
+	eng.ProcessEvents(nil)
+	sdl.Delay(2000)
 }

@@ -33,23 +33,23 @@ func main() {
 		eng.SaveSurface(name, &surface)
 	}
 
-	window.RenderSurface("default")
+	window.RenderSurface("default", false)
 
-	eng.Loop(func(event sdl.Event) bool {
+	eng.EventLoop(func(event sdl.Event) bool {
 		switch eventType := event.(type) {
 		// Key pressed
 		case *sdl.KeyboardEvent:
 			switch eventType.Keysym.Sym {
 			case sdl.K_UP:
-				window.RenderSurface("up")
+				window.RenderSurface("up", false)
 			case sdl.K_RIGHT:
-				window.RenderSurface("right")
+				window.RenderSurface("right", false)
 			case sdl.K_DOWN:
-				window.RenderSurface("down")
+				window.RenderSurface("down", false)
 			case sdl.K_LEFT:
-				window.RenderSurface("left")
+				window.RenderSurface("left", false)
 			default:
-				window.RenderSurface("default")
+				window.RenderSurface("default", false)
 			}
 		}
 		return true

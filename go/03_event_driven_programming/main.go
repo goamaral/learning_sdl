@@ -19,7 +19,7 @@ func main() {
 	window := win.Create()
 	defer window.Destroy()
 
-	eng.Loop(func(event sdl.Event) bool {
+	eng.EventLoop(func(event sdl.Event) bool {
 		switch eventType := event.(type) {
 		// Key pressed
 		case *sdl.KeyboardEvent:

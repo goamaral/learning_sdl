@@ -18,19 +18,27 @@ func Quit() {
 	sdl.Quit()
 }
 
-// Main loop
-func Loop(handler func(sdl.Event) bool) {
-	// Main loop
-	running := true
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			// Window closed
-			case *sdl.QuitEvent:
-				running = false
-			default:
-				running = handler(event)
+// Event loop
+func EventLoop(eventHandler func(sdl.Event) bool) {
+	for ProcessEvents(eventHandler) {
+	}
+}
+
+// Process events
+func ProcessEvents(eventHandler func(sdl.Event) bool) bool {
+	shouldContinue := true
+
+	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+		switch event.(type) {
+		// Window closed
+		case *sdl.QuitEvent:
+			shouldContinue = false
+		default:
+			if eventHandler != nil {
+				shouldContinue = shouldContinue && eventHandler(event)
 			}
 		}
 	}
+
+	return shouldContinue
 }
