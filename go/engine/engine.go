@@ -1,6 +1,8 @@
 package engine
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 // Init engine
 func Init() {
@@ -12,6 +14,7 @@ func Init() {
 
 // Quit engine
 func Quit() {
+	FreeSurfaces()
 	sdl.Quit()
 }
 

@@ -1,7 +1,6 @@
 package window
 
 import (
-	srf "github.com/Goamaral/learning_sdl/surface"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -19,23 +18,4 @@ func Create() Window {
 	window := Window{Window: sdlWindow}
 
 	return window
-}
-
-// Get window surface
-func (w *Window) GetSurface() srf.Surface {
-	sdlSurface, err := w.Window.GetSurface()
-	if err != nil {
-		panic(err)
-	}
-	return srf.Surface{Surface: sdlSurface}
-}
-
-// Render surface
-func (w *Window) RenderSurface(surface *srf.Surface) {
-	err := surface.Blit(nil, w.GetSurface().Surface, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	w.UpdateSurface()
 }

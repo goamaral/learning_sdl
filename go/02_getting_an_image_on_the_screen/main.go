@@ -20,10 +20,10 @@ func main() {
 	window := win.Create()
 	defer window.Destroy()
 
-	surface := srf.LoadFromBmp(window.GetSurface().Format)
-	defer surface.Free()
+	surface := srf.LoadFromBmp("../resources/images/hello_world.bmp", window.GetSurface().Format)
+	eng.SaveSurface("helloWorld", &surface)
 
-	window.RenderSurface(&surface)
+	window.RenderRawSurface(&surface)
 
 	eng.Loop(func(event sdl.Event) bool {
 		return true

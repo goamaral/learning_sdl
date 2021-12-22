@@ -1,6 +1,6 @@
 /*
-	Key Presses
-	https://lazyfoo.net/tutorials/SDL/04_key_presses
+	Event Driven Programming
+	https://lazyfoo.net/tutorials/SDL/03_event_driven_programming
 */
 
 package main

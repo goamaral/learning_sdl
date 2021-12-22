@@ -11,8 +11,8 @@ type Surface struct {
 }
 
 // Load surface from bmp
-func LoadFromBmp(pixelFormat *sdl.PixelFormat) Surface {
-	surface, err := sdl.LoadBMP("../resources/images/hello_world.bmp")
+func LoadFromBmp(path string, pixelFormat *sdl.PixelFormat) Surface {
+	surface, err := sdl.LoadBMP(path)
 	if err != nil {
 		panic(err)
 	}
