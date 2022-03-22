@@ -16,11 +16,11 @@ func (w *Window) GetNextTextureID() uint64 {
 // Save texture
 func (w *Window) SaveTexture(texture *Texture) {
 	texture.ID = w.GetNextSurfaceID()
-	w.textureMap[texture.ID] = texture
+	w.textureMap[texture.ID] = *texture
 }
 
 // Get texture
-func (w *Window) GetTexture(id uint64) (*Texture, error) {
+func (w *Window) GetTexture(id uint64) (Texture, error) {
 	texture, exists := w.textureMap[id]
 	if !exists {
 		return texture, errors.Errorf("texture %d not found", id)

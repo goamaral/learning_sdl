@@ -8,17 +8,30 @@ import (
 
 type Window struct {
 	*sdl.Window
-	surface       *sdl.Surface
-	renderer      *sdl.Renderer
-	surfaceMap    map[uint64]*Surface
+	Width    int32
+	Height   int32
+	surface  *sdl.Surface
+	renderer *sdl.Renderer
+
+	/* Storage */
+	surfaceMap    map[uint64]Surface
 	lastSurfaceID uint64
-	textureMap    map[uint64]*Texture
+	textureMap    map[uint64]Texture
 	lastTextureID uint64
 }
 
 // Create window
-func CreateWindow() (win Window, err error) {
-	win.Window, err = sdl.CreateWindow("SDL Tutorial", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, 640, 480, sdl.WINDOW_SHOWN)
+func CreateWindow() (Window, error) {
+	var err error
+
+	win := Window{
+		Width:      640,
+		Height:     480,
+		surfaceMap: map[uint64]Surface{},
+		textureMap: map[uint64]Texture{},
+	}
+
+	win.Window, err = sdl.CreateWindow("SDL Tutorial", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, win.Width, win.Height, sdl.WINDOW_SHOWN)
 	if err != nil {
 		return win, errors.Wrap(err, "failed to create window")
 	}
@@ -32,9 +45,6 @@ func CreateWindow() (win Window, err error) {
 	if err != nil {
 		return win, errors.Wrap(err, "failed to get window inner renderer")
 	}
-
-	win.surfaceMap = map[uint64]*Surface{}
-	win.textureMap = map[uint64]*Texture{}
 
 	return win, nil
 }

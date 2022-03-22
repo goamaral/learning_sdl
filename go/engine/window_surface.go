@@ -21,11 +21,11 @@ func (w *Window) GetNextSurfaceID() uint64 {
 // Save surface
 func (w *Window) SaveSurface(surface *Surface) {
 	surface.ID = w.GetNextSurfaceID()
-	w.surfaceMap[surface.ID] = surface
+	w.surfaceMap[surface.ID] = *surface
 }
 
 // Get surface
-func (w *Window) GetSurface(id uint64) (*Surface, error) {
+func (w *Window) GetSurface(id uint64) (Surface, error) {
 	surface, exists := w.surfaceMap[id]
 	if !exists {
 		return surface, errors.Errorf("surface %d not found", id)
