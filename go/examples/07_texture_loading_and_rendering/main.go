@@ -27,22 +27,22 @@ func main() {
 	}
 	defer window.Destroy()
 
-	surface, err := window.LoadSurface("../../../resources/images/texture.png")
+	surfaceId, err := window.LoadSurface("../../../resources/images/texture.png")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
-	texture, err := window.ConvertSurfaceToTexture(surface.ID)
+	textureId, err := window.ConvertSurfaceToTexture(surfaceId)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return
 	}
 
-	window.Reset(engine.COLOR_BLACK)
-	window.RenderTexture(texture.ID)
-	window.Present()
+	window.Reset(&engine.COLOR_BLACK)
+	window.RenderTexture(textureId)
 
+	window.Present()
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }

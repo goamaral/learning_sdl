@@ -48,20 +48,20 @@ func (w *Window) DestroySurface(id uint64) error {
 }
 
 // Load surface (supports bmp, png)
-func (w *Window) LoadSurface(path string) (surface *Surface, err error) {
+func (w *Window) LoadSurface(path string) (id uint64, err error) {
 	pathParts := strings.Split(path, ".")
-	surface = &Surface{}
+	surface := Surface{}
 
 	switch pathParts[len(pathParts)-1] {
 	case "bmp":
 		surface.Surface, err = sdl.LoadBMP(path)
 		if err != nil {
-			return surface, errors.Wrap(err, "failed to load surface from bmp")
+			return 0, errors.Wrap(err, "failed to load surface from bmp")
 		}
 	case "png":
 		surface.Surface, err = img.Load(path)
 		if err != nil {
-			return surface, errors.Wrap(err, "failed to load surface from png")
+			return 0, errors.Wrap(err, "failed to load surface from png")
 		}
 	}
 
@@ -70,9 +70,9 @@ func (w *Window) LoadSurface(path string) (surface *Surface, err error) {
 		log.Warn().Err(err).Str("path", path).Msg("Failed to optimize loaded surface")
 	}
 
-	w.SaveSurface(surface)
+	w.SaveSurface(&surface)
 
-	return surface, nil
+	return surface.ID, nil
 }
 
 // Render surface
@@ -103,20 +103,20 @@ func (w *Window) RenderSurface(id uint64, scaled bool) error {
 }
 
 // Convert surface to texture
-func (w *Window) ConvertSurfaceToTexture(id uint64) (*Texture, error) {
-	texture := &Texture{}
+func (w *Window) ConvertSurfaceToTexture(id uint64) (uint64, error) {
+	texture := Texture{}
 
 	surface, err := w.GetSurface(id)
 	if err != nil {
-		return texture, errors.Wrap(err, "failed to get surface")
+		return 0, errors.Wrap(err, "failed to get surface")
 	}
 
 	texture.Texture, err = w.renderer.CreateTextureFromSurface(surface.Surface)
 	if err != nil {
-		return texture, errors.Wrap(err, "failed to create texture from surface")
+		return 0, errors.Wrap(err, "failed to create texture from surface")
 	}
 
-	w.SaveTexture(texture)
+	w.SaveTexture(&texture)
 
-	return texture, nil
+	return texture.ID, nil
 }

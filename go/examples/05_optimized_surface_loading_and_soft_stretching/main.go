@@ -27,17 +27,17 @@ func main() {
 	}
 	defer window.Destroy()
 
-	surface, err := window.LoadSurface("../../../resources/images/stretch.bmp")
+	surfaceId, err := window.LoadSurface("../../../resources/images/stretch.bmp")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
-	window.RenderSurface(surface.ID, false)
+	window.RenderSurface(surfaceId, false)
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 
-	window.RenderSurface(surface.ID, true)
+	window.RenderSurface(surfaceId, true)
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }

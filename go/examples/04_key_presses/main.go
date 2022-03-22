@@ -43,8 +43,8 @@ func main() {
 	}
 
 	for name, path := range surfacePaths {
-		surface, err := window.LoadSurface(path)
-		surfaceIds[name] = surface.ID
+		surfaceId, err := window.LoadSurface(path)
+		surfaceIds[name] = surfaceId
 		if err != nil {
 			log.Error().Err(err).Msgf("Failed to load surface %s at %s", name, path)
 			return
