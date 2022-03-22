@@ -6,20 +6,28 @@
 package main
 
 import (
-	eng "github.com/Goamaral/learning_sdl/engine"
-	win "github.com/Goamaral/learning_sdl/window"
-
+	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
+
+	"github.com/Goamaral/learning_sdl/engine"
 )
 
 func main() {
-	eng.Init()
-	defer eng.Quit()
+	err := engine.Init()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to initialized engine")
+		return
+	}
+	defer engine.Quit()
 
-	window := win.Create()
+	window, err := engine.CreateWindow()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to create window")
+		return
+	}
 	defer window.Destroy()
 
-	eng.EventLoop(func(event sdl.Event) bool {
+	engine.EventLoop(func(event sdl.Event) bool {
 		switch eventType := event.(type) {
 		// Key pressed
 		case *sdl.KeyboardEvent:

@@ -5,17 +5,12 @@ import (
 )
 
 // Init engine
-func Init() {
-	err := sdl.Init(sdl.INIT_EVERYTHING)
-	if err != nil {
-		panic(err)
-	}
-
+func Init() error {
+	return sdl.Init(sdl.INIT_EVERYTHING)
 }
 
 // Quit engine
 func Quit() {
-	FreeSurfaces()
 	sdl.Quit()
 }
 
