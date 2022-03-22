@@ -9,18 +9,9 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-// Get next surface id
-// FUTURE: Make it thread safe
-func (w *Window) GetNextSurfaceID() uint64 {
-	nextID := w.lastSurfaceID + 1
-	w.lastSurfaceID = nextID
-
-	return nextID
-}
-
 // Save surface
 func (w *Window) SaveSurface(surface *Surface) {
-	surface.ID = w.GetNextSurfaceID()
+	surface.ID = w.GetNextResourceID()
 	w.surfaceMap[surface.ID] = *surface
 }
 

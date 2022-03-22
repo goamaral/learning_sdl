@@ -13,11 +13,11 @@ type Window struct {
 	surface  *sdl.Surface
 	renderer *sdl.Renderer
 
-	/* Storage */
-	surfaceMap    map[uint64]Surface
-	lastSurfaceID uint64
-	textureMap    map[uint64]Texture
-	lastTextureID uint64
+	/* Resources */
+	lastResourceID uint64
+	surfaceMap     map[uint64]Surface
+	textureMap     map[uint64]Texture
+	viewportMap    map[uint64]Viewport // Do not need to be deallocated
 }
 
 // Create window
@@ -25,10 +25,11 @@ func CreateWindow() (Window, error) {
 	var err error
 
 	win := Window{
-		Width:      640,
-		Height:     480,
-		surfaceMap: map[uint64]Surface{},
-		textureMap: map[uint64]Texture{},
+		Width:       640,
+		Height:      480,
+		surfaceMap:  map[uint64]Surface{},
+		textureMap:  map[uint64]Texture{},
+		viewportMap: map[uint64]Viewport{},
 	}
 
 	win.Window, err = sdl.CreateWindow("SDL Tutorial", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, win.Width, win.Height, sdl.WINDOW_SHOWN)
@@ -66,4 +67,13 @@ func (w *Window) Destroy() {
 			log.Warn().Err(err).Uint64("id", id).Msg("Failed to destory texture")
 		}
 	}
+}
+
+// Get next resource id
+// FUTURE: Make it thread safe
+func (w *Window) GetNextResourceID() uint64 {
+	nextID := w.lastResourceID + 1
+	w.lastResourceID = nextID
+
+	return nextID
 }

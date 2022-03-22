@@ -4,18 +4,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Get next texture id
-// FUTURE: Make it thread safe
-func (w *Window) GetNextTextureID() uint64 {
-	nextID := w.lastTextureID + 1
-	w.lastTextureID = nextID
-
-	return nextID
-}
-
 // Save texture
 func (w *Window) SaveTexture(texture *Texture) {
-	texture.ID = w.GetNextSurfaceID()
+	texture.ID = w.GetNextResourceID()
 	w.textureMap[texture.ID] = *texture
 }
 
@@ -41,7 +32,14 @@ func (w *Window) DestroyTexture(id uint64) error {
 }
 
 // Render texture
-func (w *Window) RenderTexture(id uint64) error {
+func (w *Window) RenderTexture(id uint64, viewportId uint64) error {
+	if viewportId != 0 {
+		err := w.SetViewportByID(viewportId)
+		if err != nil {
+			return errors.Wrap(err, "failed to set viewport")
+		}
+	}
+
 	texture, err := w.GetTexture(id)
 	if err != nil {
 		return errors.Wrap(err, "failed to get texture")
