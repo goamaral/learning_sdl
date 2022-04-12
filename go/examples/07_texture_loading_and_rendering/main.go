@@ -40,7 +40,7 @@ func main() {
 	}
 
 	window.Reset(&engine.COLOR_BLACK)
-	window.RenderTexture(textureId, 0)
+	window.RenderTexture(textureId, 0, nil)
 
 	window.Present()
 	engine.ProcessEvents(nil)

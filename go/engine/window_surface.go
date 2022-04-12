@@ -95,18 +95,20 @@ func (w *Window) RenderSurface(id uint64, scaled bool) error {
 
 // Convert surface to texture
 func (w *Window) ConvertSurfaceToTexture(id uint64) (uint64, error) {
-	texture := Texture{}
-
+	// Get surface
 	surface, err := w.GetSurface(id)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get surface")
 	}
 
+	// Create texture from surface
+	texture := Texture{W: surface.W, H: surface.H}
 	texture.Texture, err = w.renderer.CreateTextureFromSurface(surface.Surface)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to create texture from surface")
 	}
 
+	// Save texture
 	w.SaveTexture(&texture)
 
 	return texture.ID, nil

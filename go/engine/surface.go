@@ -21,3 +21,8 @@ func (s *Surface) OptimizeSurface(pixelFormat *sdl.PixelFormat) error {
 
 	return nil
 }
+
+// Set color key
+func (s *Surface) SetColorKey(color Color) error {
+	return s.Surface.SetColorKey(true, sdl.MapRGB(s.Format, color.red, color.green, color.blue))
+}

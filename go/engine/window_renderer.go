@@ -39,6 +39,16 @@ func (w *Window) SetDrawColor(color *Color) error {
 
 // Set window renderer viewport by id
 func (w *Window) SetViewportByID(id uint64) error {
+	// Reset viewport if id is zero
+	if id == 0 {
+		err := w.renderer.SetViewport(nil)
+		if err != nil {
+			return errors.Wrap(err, "failed to set window renderer viewport")
+		}
+
+		return nil
+	}
+
 	// Get viewport
 	viewport, err := w.GetViewport(id)
 	if err != nil {

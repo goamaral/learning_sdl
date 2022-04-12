@@ -59,9 +59,9 @@ func main() {
 	}
 
 	// Render texture to every viewport
-	window.RenderTexture(textureId, topLeftViewportId)
-	window.RenderTexture(textureId, topRightViewportId)
-	window.RenderTexture(textureId, bottomViewportId)
+	window.RenderTexture(textureId, topLeftViewportId, nil)
+	window.RenderTexture(textureId, topRightViewportId, nil)
+	window.RenderTexture(textureId, bottomViewportId, nil)
 
 	// Present
 	window.Present()
