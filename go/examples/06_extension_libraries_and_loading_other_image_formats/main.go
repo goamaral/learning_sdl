@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	// Init engine
 	err := engine.Init()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to initialized engine")
@@ -20,6 +21,7 @@ func main() {
 	}
 	defer engine.Quit()
 
+	// Create window
 	window, err := engine.CreateWindow()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
@@ -27,13 +29,21 @@ func main() {
 	}
 	defer window.Destroy()
 
+	// Load surface
 	surfaceId, err := window.LoadSurface("../../../resources/images/png_loaded.png")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
-	window.RenderSurface(surfaceId, false)
+	// Render surface
+	err = window.RenderSurface(surfaceId, false)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to render surface")
+		return
+	}
+
+	// Process events
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }

@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	// Init engine
 	err := engine.Init()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to initialized engine")
@@ -20,6 +21,7 @@ func main() {
 	}
 	defer engine.Quit()
 
+	// Create window
 	window, err := engine.CreateWindow()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
@@ -27,6 +29,7 @@ func main() {
 	}
 	defer window.Destroy()
 
+	// Run event loop
 	engine.EventLoop(func(event sdl.Event) bool {
 		switch eventType := event.(type) {
 		// Key pressed

@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	// Init engine
 	err := engine.Init()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to initialized engine")
@@ -20,6 +21,7 @@ func main() {
 	}
 	defer engine.Quit()
 
+	// Create window
 	window, err := engine.CreateWindow()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
@@ -27,6 +29,7 @@ func main() {
 	}
 	defer window.Destroy()
 
+	// Load surfaces and map ids
 	surfacePaths := map[string]string{
 		"default": "../../../resources/images/default.bmp",
 		"up":      "../../../resources/images/up.bmp",
@@ -51,23 +54,44 @@ func main() {
 		}
 	}
 
-	window.RenderSurface(surfaceIds["default"], false)
+	// Render default surface
+	err = window.RenderSurface(surfaceIds["default"], false)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to render default surface")
+		return
+	}
 
+	// Run event loop
 	engine.EventLoop(func(event sdl.Event) bool {
 		switch eventType := event.(type) {
 		// Key pressed
 		case *sdl.KeyboardEvent:
 			switch eventType.Keysym.Sym {
 			case sdl.K_UP:
-				window.RenderSurface(surfaceIds["up"], false)
+				err = window.RenderSurface(surfaceIds["up"], false)
+				if err != nil {
+					log.Error().Err(err).Msg("Failed to render up surface")
+				}
 			case sdl.K_RIGHT:
-				window.RenderSurface(surfaceIds["right"], false)
+				err = window.RenderSurface(surfaceIds["right"], false)
+				if err != nil {
+					log.Error().Err(err).Msg("Failed to render right surface")
+				}
 			case sdl.K_DOWN:
-				window.RenderSurface(surfaceIds["down"], false)
+				err = window.RenderSurface(surfaceIds["down"], false)
+				if err != nil {
+					log.Error().Err(err).Msg("Failed to render down surface")
+				}
 			case sdl.K_LEFT:
-				window.RenderSurface(surfaceIds["left"], false)
+				err = window.RenderSurface(surfaceIds["left"], false)
+				if err != nil {
+					log.Error().Err(err).Msg("Failed to render left surface")
+				}
 			default:
-				window.RenderSurface(surfaceIds["default"], false)
+				err = window.RenderSurface(surfaceIds["default"], false)
+				if err != nil {
+					log.Error().Err(err).Msg("Failed to render default surface")
+				}
 			}
 		}
 
