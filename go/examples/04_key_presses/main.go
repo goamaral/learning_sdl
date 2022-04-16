@@ -37,7 +37,7 @@ func main() {
 		"down":    "../../../resources/images/down.bmp",
 		"left":    "../../../resources/images/left.bmp",
 	}
-	surfaceIds := map[string]uint64{
+	surfaceIds := map[string]uint32{
 		"default": 0,
 		"up":      0,
 		"right":   0,
@@ -46,8 +46,8 @@ func main() {
 	}
 
 	for name, path := range surfacePaths {
-		surfaceId, err := window.LoadSurface(path)
-		surfaceIds[name] = surfaceId
+		surface, err := window.LoadSurface(path)
+		surfaceIds[name] = surface.ID
 		if err != nil {
 			log.Error().Err(err).Msgf("Failed to load surface %s at %s", name, path)
 			return

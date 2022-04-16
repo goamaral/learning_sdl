@@ -30,14 +30,14 @@ func main() {
 	defer window.Destroy()
 
 	// Load surface
-	surfaceId, err := window.LoadSurface("../../../resources/images/stretch.bmp")
+	surface, err := window.LoadSurface("../../../resources/images/stretch.bmp")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
 	// Render surface not scaled
-	err = window.RenderSurface(surfaceId, false)
+	err = window.RenderSurface(surface.ID, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render not scaled surface")
 		return
@@ -46,7 +46,7 @@ func main() {
 	sdl.Delay(2000)
 
 	// Render surface scaled
-	err = window.RenderSurface(surfaceId, true)
+	err = window.RenderSurface(surface.ID, true)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render scaled surface")
 		return

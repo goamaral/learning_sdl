@@ -8,12 +8,12 @@ import (
 // Save viewport
 func (w *Window) SaveViewport(viewport *Viewport) {
 	viewport.ID = w.GetNextResourceID()
-	w.viewportMap[viewport.ID] = *viewport
+	w.viewports[viewport.ID] = *viewport
 }
 
 // Get viewport
-func (w *Window) GetViewport(id uint64) (Viewport, error) {
-	viewport, exists := w.viewportMap[id]
+func (w *Window) GetViewport(id uint32) (Viewport, error) {
+	viewport, exists := w.viewports[id]
 	if !exists {
 		return viewport, errors.Errorf("viewport %d not found", id)
 	}
@@ -22,9 +22,12 @@ func (w *Window) GetViewport(id uint64) (Viewport, error) {
 }
 
 // Create viewport
-func (w *Window) CreateViewport(x, y, width, height int32) uint64 {
-	viewport := Viewport{Rect: sdl.Rect{X: x, Y: y, W: width, H: height}}
+func (w *Window) CreateViewport(x, y, width, height int32) Viewport {
+	viewport := Viewport{
+		Rect:   sdl.Rect{X: x, Y: y, W: width, H: height},
+		window: w,
+	}
 	w.SaveViewport(&viewport)
 
-	return viewport.ID
+	return viewport
 }

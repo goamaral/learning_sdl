@@ -6,7 +6,7 @@ import (
 
 type Surface struct {
 	*sdl.Surface
-	ID uint64
+	ID uint32
 }
 
 // Optimize surface

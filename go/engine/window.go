@@ -8,16 +8,17 @@ import (
 
 type Window struct {
 	*sdl.Window
-	Width    int32
-	Height   int32
+	W        int32
+	H        int32
 	surface  *sdl.Surface
 	renderer *sdl.Renderer
 
 	/* Resources */
-	lastResourceID uint64
-	surfaceMap     map[uint64]Surface
-	textureMap     map[uint64]Texture
-	viewportMap    map[uint64]Viewport // Do not need to be deallocated
+	lastResourceID uint32
+	surfaces       map[uint32]Surface
+	textures       map[uint32]Texture
+	viewports      map[uint32]Viewport // Do not need to be deallocated
+	spriteMaps     map[uint32]SpriteMap
 }
 
 // Create window
@@ -25,14 +26,15 @@ func CreateWindow() (Window, error) {
 	var err error
 
 	win := Window{
-		Width:       640,
-		Height:      480,
-		surfaceMap:  map[uint64]Surface{},
-		textureMap:  map[uint64]Texture{},
-		viewportMap: map[uint64]Viewport{},
+		W:          640,
+		H:          480,
+		surfaces:   map[uint32]Surface{},
+		textures:   map[uint32]Texture{},
+		viewports:  map[uint32]Viewport{},
+		spriteMaps: map[uint32]SpriteMap{},
 	}
 
-	win.Window, err = sdl.CreateWindow("SDL Tutorial", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, win.Width, win.Height, sdl.WINDOW_SHOWN)
+	win.Window, err = sdl.CreateWindow("SDL Tutorial", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, win.W, win.H, sdl.WINDOW_SHOWN)
 	if err != nil {
 		return win, errors.Wrap(err, "failed to create window")
 	}
@@ -53,25 +55,25 @@ func CreateWindow() (Window, error) {
 // Destroy window
 func (w *Window) Destroy() {
 	// Destroy surfaces
-	for id := range w.surfaceMap {
+	for id := range w.surfaces {
 		err := w.DestroySurface(id)
 		if err != nil {
-			log.Warn().Err(err).Uint64("id", id).Msg("Failed to destory surface")
+			log.Warn().Err(err).Uint32("id", id).Msg("Failed to destory surface")
 		}
 	}
 
 	// Destroy textures
-	for id := range w.textureMap {
+	for id := range w.textures {
 		err := w.DestroyTexture(id)
 		if err != nil {
-			log.Warn().Err(err).Uint64("id", id).Msg("Failed to destory texture")
+			log.Warn().Err(err).Uint32("id", id).Msg("Failed to destory texture")
 		}
 	}
 }
 
 // Get next resource id
 // FUTURE: Make it thread safe
-func (w *Window) GetNextResourceID() uint64 {
+func (w *Window) GetNextResourceID() uint32 {
 	nextID := w.lastResourceID + 1
 	w.lastResourceID = nextID
 

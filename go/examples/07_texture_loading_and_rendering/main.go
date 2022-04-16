@@ -30,14 +30,14 @@ func main() {
 	defer window.Destroy()
 
 	// Load surface
-	surfaceId, err := window.LoadSurface("../../../resources/images/texture.png")
+	surface, err := window.LoadSurface("../../../resources/images/texture.png")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
 	// Convert surface to texture
-	textureId, err := window.ConvertSurfaceToTexture(surfaceId)
+	texture, err := window.ConvertSurfaceToTexture(surface.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return
@@ -46,10 +46,10 @@ func main() {
 	// Render texture
 	err = window.Reset(&engine.COLOR_BLACK)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset window renderer")
+		log.Error().Err(err).Msg("Failed to reset window")
 		return
 	}
-	err = window.RenderTexture(textureId, 0, nil)
+	err = window.RenderTexture(&texture, 0, 0)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render texture")
 		return

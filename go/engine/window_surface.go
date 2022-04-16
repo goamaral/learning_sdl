@@ -12,12 +12,12 @@ import (
 // Save surface
 func (w *Window) SaveSurface(surface *Surface) {
 	surface.ID = w.GetNextResourceID()
-	w.surfaceMap[surface.ID] = *surface
+	w.surfaces[surface.ID] = *surface
 }
 
 // Get surface
-func (w *Window) GetSurface(id uint64) (Surface, error) {
-	surface, exists := w.surfaceMap[id]
+func (w *Window) GetSurface(id uint32) (Surface, error) {
+	surface, exists := w.surfaces[id]
 	if !exists {
 		return surface, errors.Errorf("surface %d not found", id)
 	}
@@ -26,33 +26,32 @@ func (w *Window) GetSurface(id uint64) (Surface, error) {
 }
 
 // Destroy surface
-func (w *Window) DestroySurface(id uint64) error {
-	surface, exists := w.surfaceMap[id]
+func (w *Window) DestroySurface(id uint32) error {
+	surface, exists := w.surfaces[id]
 	if !exists {
 		return errors.Errorf("surface %d not found", id)
 	}
 
-	delete(w.surfaceMap, id)
+	delete(w.surfaces, id)
 	surface.Free()
 
 	return nil
 }
 
 // Load surface (supports bmp, png)
-func (w *Window) LoadSurface(path string) (id uint64, err error) {
+func (w *Window) LoadSurface(path string) (surface Surface, err error) {
 	pathParts := strings.Split(path, ".")
-	surface := Surface{}
 
 	switch pathParts[len(pathParts)-1] {
 	case "bmp":
 		surface.Surface, err = sdl.LoadBMP(path)
 		if err != nil {
-			return 0, errors.Wrap(err, "failed to load surface from bmp")
+			return surface, errors.Wrap(err, "failed to load surface from bmp")
 		}
 	case "png":
 		surface.Surface, err = img.Load(path)
 		if err != nil {
-			return 0, errors.Wrap(err, "failed to load surface from png")
+			return surface, errors.Wrap(err, "failed to load surface from png")
 		}
 	}
 
@@ -63,11 +62,11 @@ func (w *Window) LoadSurface(path string) (id uint64, err error) {
 
 	w.SaveSurface(&surface)
 
-	return surface.ID, nil
+	return surface, nil
 }
 
 // Render surface
-func (w *Window) RenderSurface(id uint64, scaled bool) error {
+func (w *Window) RenderSurface(id uint32, scaled bool) error {
 	surface, err := w.GetSurface(id)
 	if err != nil {
 		return errors.Wrap(err, "failed to get surface")
@@ -94,22 +93,22 @@ func (w *Window) RenderSurface(id uint64, scaled bool) error {
 }
 
 // Convert surface to texture
-func (w *Window) ConvertSurfaceToTexture(id uint64) (uint64, error) {
+func (w *Window) ConvertSurfaceToTexture(id uint32) (texture Texture, err error) {
 	// Get surface
 	surface, err := w.GetSurface(id)
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to get surface")
+		return texture, errors.Wrap(err, "failed to get surface")
 	}
 
 	// Create texture from surface
-	texture := Texture{W: surface.W, H: surface.H}
+	texture = Texture{W: surface.W, H: surface.H}
 	texture.Texture, err = w.renderer.CreateTextureFromSurface(surface.Surface)
 	if err != nil {
-		return 0, errors.Wrap(err, "failed to create texture from surface")
+		return texture, errors.Wrap(err, "failed to create texture from surface")
 	}
 
 	// Save texture
 	w.SaveTexture(&texture)
 
-	return texture.ID, nil
+	return texture, nil
 }

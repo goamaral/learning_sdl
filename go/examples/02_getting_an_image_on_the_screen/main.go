@@ -30,14 +30,14 @@ func main() {
 	defer window.Destroy()
 
 	// Load surface
-	surfaceId, err := window.LoadSurface("../../../resources/images/hello_world.bmp")
+	surface, err := window.LoadSurface("../../../resources/images/hello_world.bmp")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
 	// Render surface
-	err = window.RenderSurface(surfaceId, false)
+	err = window.RenderSurface(surface.ID, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render surface")
 		return

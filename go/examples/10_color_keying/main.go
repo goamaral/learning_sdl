@@ -29,31 +29,27 @@ func main() {
 	defer window.Destroy()
 
 	// Load surfaces
-	backgroundSurfaceId, err := window.LoadSurface("../../../resources/images/background.png")
+	backgroundSurface, err := window.LoadSurface("../../../resources/images/background.png")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load background surface")
 		return
 	}
-	playerSurfaceId, err := window.LoadSurface("../../../resources/images/player.png")
+	playerSurface, err := window.LoadSurface("../../../resources/images/player.png")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load player surface")
 		return
-	}
-	playerSurface, err := window.GetSurface(playerSurfaceId)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to get player surface")
 	}
 
 	// Set player surface color key
 	playerSurface.SetColorKey(engine.COLOR_CYAN)
 
 	// Convert surfaces to textures
-	backgroundTextureId, err := window.ConvertSurfaceToTexture(backgroundSurfaceId)
+	backgroundTexture, err := window.ConvertSurfaceToTexture(backgroundSurface.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert background surface to texture")
 		return
 	}
-	playerTextureId, err := window.ConvertSurfaceToTexture(playerSurfaceId)
+	playerTexture, err := window.ConvertSurfaceToTexture(playerSurface.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert player surface to texture")
 		return
@@ -67,8 +63,8 @@ func main() {
 	}
 
 	// Render texture to every viewport
-	window.RenderTexture(backgroundTextureId, 0, nil)
-	window.RenderTexture(playerTextureId, 0, &sdl.Rect{X: 240, Y: 190})
+	window.RenderTexture(&backgroundTexture, 0, 0)
+	window.RenderTexture(&playerTexture, 240, 190)
 
 	// Present
 	window.Present()

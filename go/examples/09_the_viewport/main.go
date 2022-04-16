@@ -29,27 +29,27 @@ func main() {
 	defer window.Destroy()
 
 	// Load surface
-	surfaceId, err := window.LoadSurface("../../../resources/images/texture.png")
+	surface, err := window.LoadSurface("../../../resources/images/texture.png")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to load surface")
 		return
 	}
 
 	// Convert surface to texture
-	textureId, err := window.ConvertSurfaceToTexture(surfaceId)
+	texture, err := window.ConvertSurfaceToTexture(surface.ID)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return
 	}
 
 	// Create top left viewport
-	topLeftViewportId := window.CreateViewport(0, 0, window.Width/2, window.Height/2)
+	topLeftViewport := window.CreateViewport(0, 0, window.W/2, window.H/2)
 
 	// Create top right viewport
-	topRightViewportId := window.CreateViewport(window.Width/2, 0, window.Width/2, window.Height/2)
+	topRightViewport := window.CreateViewport(window.W/2, 0, window.W/2, window.H/2)
 
 	// Create bottom viewport
-	bottomViewportId := window.CreateViewport(0, window.Height/2, window.Width, window.Height/2)
+	bottomViewport := window.CreateViewport(0, window.H/2, window.W, window.H/2)
 
 	// Reset window
 	err = window.Reset(&engine.COLOR_BLACK)
@@ -59,9 +59,10 @@ func main() {
 	}
 
 	// Render texture to every viewport
-	window.RenderTexture(textureId, topLeftViewportId, nil)
-	window.RenderTexture(textureId, topRightViewportId, nil)
-	window.RenderTexture(textureId, bottomViewportId, nil)
+	topLeftViewport.RenderTexture(&texture, 0, 0)
+	topLeftViewport.RenderTexture(&texture, 0, 0)
+	topRightViewport.RenderTexture(&texture, 0, 0)
+	bottomViewport.RenderTexture(&texture, 0, 0)
 
 	// Present
 	window.Present()
