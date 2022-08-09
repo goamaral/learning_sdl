@@ -29,7 +29,7 @@ func (w *Window) Present() {
 
 // Set window renderer draw color
 func (w *Window) SetDrawColor(color *Color) error {
-	err := w.renderer.SetDrawColor(color.red, color.green, color.blue, color.alpha)
+	err := w.renderer.SetDrawColor(color.Red, color.Green, color.Blue, color.Alpha)
 	if err != nil {
 		return errors.Wrap(err, "failed to set window renderer draw color")
 	}
