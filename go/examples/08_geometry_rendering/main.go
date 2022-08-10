@@ -38,7 +38,7 @@ func main() {
 	// Render red rectangle fill
 	err = window.RenderRectangle(&engine.Rectangle{
 		Rect:       sdl.Rect{X: window.W / 4, Y: window.H / 4, W: window.W / 2, H: window.H / 2},
-		Color:      engine.COLOR_RED,
+		Color:      engine.ColorByName[engine.ColorName_RED],
 		RenderMode: engine.GEOMETRY_RENDER_MODE_FILL,
 	})
 	if err != nil {
@@ -49,7 +49,7 @@ func main() {
 	// Render green rectangle outline
 	err = window.RenderRectangle(&engine.Rectangle{
 		Rect:       sdl.Rect{X: window.W / 6, Y: window.H / 6, W: window.W * 2 / 3, H: window.H * 2 / 3},
-		Color:      engine.COLOR_GREEN,
+		Color:      engine.ColorByName[engine.ColorName_GREEN],
 		RenderMode: engine.GEOMETRY_RENDER_MODE_OUTLINE,
 	})
 	if err != nil {
@@ -58,7 +58,7 @@ func main() {
 	}
 
 	// Render horizontal blue line
-	err = window.RenderLine(0, window.H/2, window.W, window.H/2, &engine.COLOR_BLUE)
+	err = window.RenderLine(0, window.H/2, window.W, window.H/2, engine.ColorByName[engine.ColorName_BLUE])
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render horizontal blue line")
 		return
@@ -67,7 +67,7 @@ func main() {
 	// Render yellow dots to create intermittent vertical line
 	var i int32 = 0
 	for ; i < window.H; i += 4 {
-		err = window.RenderPoint(window.W/2, i, &engine.COLOR_YELLOW)
+		err = window.RenderPoint(window.W/2, i, engine.ColorByName[engine.ColorName_YELLOW])
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render yellow dots to create intermittent vertical line")
 			return

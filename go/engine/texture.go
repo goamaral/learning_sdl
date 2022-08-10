@@ -11,5 +11,5 @@ type Texture struct {
 
 // Set color modulation
 func (t *Texture) SetColorModulation(color Color) error {
-	return t.Texture.SetColorMod(color.Red, color.Green, color.Blue)
+	return t.Texture.SetColorMod(color.R, color.G, color.B)
 }

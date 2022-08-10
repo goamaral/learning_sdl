@@ -4,7 +4,7 @@ import "github.com/pkg/errors"
 
 // Render rectangle in window renderer
 func (w *Window) RenderRectangle(rectangle *Rectangle) error {
-	err := w.SetDrawColor(&rectangle.Color)
+	err := w.SetDrawColor(rectangle.Color)
 	if err != nil {
 		return errors.Wrap(err, "failed to set window renderer draw color")
 	}
@@ -25,7 +25,7 @@ func (w *Window) RenderRectangle(rectangle *Rectangle) error {
 }
 
 // Render line in window renderer
-func (w *Window) RenderLine(x1, y1, x2, y2 int32, color *Color) error {
+func (w *Window) RenderLine(x1, y1, x2, y2 int32, color Color) error {
 	err := w.SetDrawColor(color)
 	if err != nil {
 		return errors.Wrap(err, "failed to set window renderer draw color")
@@ -40,7 +40,7 @@ func (w *Window) RenderLine(x1, y1, x2, y2 int32, color *Color) error {
 }
 
 // Render point in window renderer
-func (w *Window) RenderPoint(x, y int32, color *Color) error {
+func (w *Window) RenderPoint(x, y int32, color Color) error {
 	err := w.SetDrawColor(color)
 	if err != nil {
 		return errors.Wrap(err, "failed to set window renderer draw color")

@@ -43,7 +43,7 @@ func main() {
 		return
 	}
 
-	color := engine.COLOR_WHITE
+	color := engine.ColorByName[engine.ColorName_WHITE]
 
 	// Run event loop
 	engine.EventLoop(func(event sdl.Event) bool {
@@ -52,22 +52,22 @@ func main() {
 		case *sdl.KeyboardEvent:
 			switch eventType.Keysym.Sym {
 			case sdl.K_q:
-				color.Red = uint8(lo.Min([]int16{255, int16(color.Red) + 32}))
+				color.R = uint8(lo.Min([]int16{255, int16(color.R) + 32}))
 
 			case sdl.K_a:
-				color.Red = uint8(lo.Max([]int16{0, int16(color.Red) - 32}))
+				color.R = uint8(lo.Max([]int16{0, int16(color.R) - 32}))
 
 			case sdl.K_w:
-				color.Green = uint8(lo.Min([]int16{255, int16(color.Green) + 32}))
+				color.G = uint8(lo.Min([]int16{255, int16(color.G) + 32}))
 
 			case sdl.K_s:
-				color.Green = uint8(lo.Max([]int16{0, int16(color.Green) - 32}))
+				color.G = uint8(lo.Max([]int16{0, int16(color.G) - 32}))
 
 			case sdl.K_e:
-				color.Blue = uint8(lo.Min([]int16{255, int16(color.Blue) + 32}))
+				color.B = uint8(lo.Min([]int16{255, int16(color.B) + 32}))
 
 			case sdl.K_d:
-				color.Blue = uint8(lo.Max([]int16{0, int16(color.Blue) - 32}))
+				color.B = uint8(lo.Max([]int16{0, int16(color.B) - 32}))
 			}
 
 			err := texture.SetColorModulation(color)

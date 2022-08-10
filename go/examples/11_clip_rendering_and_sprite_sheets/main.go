@@ -35,8 +35,8 @@ func main() {
 		return
 	}
 
-	// Set player surface color key
-	surface.SetColorKey(engine.COLOR_CYAN)
+	// Set player surface transparent color
+	surface.SetTransparentColor(engine.ColorByName[engine.ColorName_CYAN])
 
 	// Convert surface to texture
 	texture, err := window.ConvertSurfaceToTexture(surface.ID)
