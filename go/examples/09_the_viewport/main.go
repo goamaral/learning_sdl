@@ -52,7 +52,7 @@ func main() {
 	bottomViewport := window.CreateViewport(0, window.H/2, window.W, window.H/2)
 
 	// Reset window
-	err = window.Reset(&engine.COLOR_BLACK)
+	err = window.Reset(nil)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reset window")
 		return

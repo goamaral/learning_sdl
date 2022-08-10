@@ -56,7 +56,7 @@ func main() {
 	}
 
 	// Reset window
-	err = window.Reset(&engine.COLOR_BLACK)
+	err = window.Reset(nil)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reset window")
 		return

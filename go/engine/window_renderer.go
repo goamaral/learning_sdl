@@ -4,6 +4,10 @@ import "github.com/pkg/errors"
 
 // Reset window renderer (draw color and viewport)
 func (w *Window) Reset(color *Color) error {
+	if color == nil {
+		color = &COLOR_BLACK
+	}
+
 	err := w.SetDrawColor(color)
 	if err != nil {
 		return errors.Wrap(err, "failed to reset window renderer draw color")
