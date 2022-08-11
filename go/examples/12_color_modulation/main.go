@@ -47,6 +47,12 @@ func main() {
 
 	// Run event loop
 	engine.EventLoop(func(event sdl.Event) bool {
+		err = window.Reset(nil)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset window")
+			return false
+		}
+
 		switch eventType := event.(type) {
 		// Key pressed
 		case *sdl.KeyboardEvent:
