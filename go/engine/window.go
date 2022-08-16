@@ -11,7 +11,7 @@ type Window struct {
 	W        int32
 	H        int32
 	surface  *sdl.Surface
-	renderer *sdl.Renderer
+	Renderer *Renderer
 
 	/* Resources */
 	lastResourceID uint32
@@ -41,13 +41,14 @@ func CreateWindow() (Window, error) {
 
 	win.surface, err = win.Window.GetSurface()
 	if err != nil {
-		return win, errors.Wrap(err, "failed to get window inner surface")
+		return win, errors.Wrap(err, "failed to get window surface")
 	}
 
-	win.renderer, err = win.Window.GetRenderer()
+	sdlRenderer, err := win.Window.GetRenderer()
 	if err != nil {
-		return win, errors.Wrap(err, "failed to get window inner renderer")
+		return win, errors.Wrap(err, "failed to get window renderer")
 	}
+	win.Renderer = NewRenderer(sdlRenderer)
 
 	return win, nil
 }

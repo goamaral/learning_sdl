@@ -2,7 +2,6 @@ package engine
 
 import (
 	"github.com/pkg/errors"
-	"github.com/veandco/go-sdl2/sdl"
 )
 
 // Save texture
@@ -30,21 +29,4 @@ func (w *Window) DestroyTexture(id uint32) error {
 
 	delete(w.textures, id)
 	return texture.Destroy()
-}
-
-// Render texture
-func (w *Window) RenderTexture(texture *Texture, x int32, y int32) error {
-	// Set viewport
-	err := w.SetViewport(nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to set viewport")
-	}
-
-	// Render texture
-	err = w.renderer.Copy(texture.Texture, nil, &sdl.Rect{X: x, Y: y, W: texture.W, H: texture.H})
-	if err != nil {
-		return errors.Wrap(err, "failed to copy texture to window renderer")
-	}
-
-	return nil
 }

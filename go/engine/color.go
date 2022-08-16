@@ -28,6 +28,6 @@ var ColorByName map[ColorName]Color = map[ColorName]Color{
 	ColorName_CYAN:    {0, 255, 255, 255},
 }
 
-func (c *Color) ToColorKey(format *sdl.PixelFormat) uint32 {
+func (c Color) ToColorKey(format *sdl.PixelFormat) uint32 {
 	return sdl.MapRGB(format, c.R, c.G, c.B)
 }

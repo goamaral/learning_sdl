@@ -1,29 +1,44 @@
 package engine
 
 import (
-	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+var viewports map[uint32]*Viewport = map[uint32]*Viewport{}
+var nextViewportID uint32
+
 type Viewport struct {
 	sdl.Rect
-	ID     uint32
-	window *Window
+	id        uint32
+	destroyed bool
 }
 
-// Render texture
-func (v *Viewport) RenderTexture(texture *Texture, x int32, y int32) error {
-	// Set viewport
-	err := v.window.SetViewport(v)
-	if err != nil {
-		return errors.Wrap(err, "failed to set viewport")
-	}
+/* PRIVATE */
+func (v *Viewport) save() *Viewport {
+	v.id = nextViewportID
+	nextViewportID += 1
+	viewports[v.id] = v
+	return v
+}
 
-	// Render texture
-	err = v.window.renderer.Copy(texture.Texture, nil, &sdl.Rect{X: x, Y: y, W: v.W, H: v.H})
-	if err != nil {
-		return errors.Wrap(err, "failed to copy texture to window renderer")
+func destroyViewports() {
+	for _, viewport := range viewports {
+		viewport.Destroy()
 	}
+}
 
-	return nil
+/* PUBLIC */
+func NewViewportFromSdlRect(sdlRect sdl.Rect) *Viewport {
+	return (&Viewport{Rect: sdlRect}).save()
+}
+
+func NewViewport(x int32, y int32, w int32, h int32) *Viewport {
+	return NewViewportFromSdlRect(sdl.Rect{X: x, Y: y, W: w, H: h})
+}
+
+func (v *Viewport) Destroy() {
+	if !v.destroyed {
+		v.destroyed = true
+		delete(viewports, v.id)
+	}
 }

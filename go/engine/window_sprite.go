@@ -1,7 +1,5 @@
 package engine
 
-import "github.com/veandco/go-sdl2/sdl"
-
 // Save sprite map
 func (w *Window) SaveSpriteMap(spriteMap *SpriteMap) {
 	spriteMap.ID = w.GetNextResourceID()
@@ -18,9 +16,5 @@ func (w *Window) CreateSpriteMap(texture *Texture, spriteW int32, spriteH int32)
 
 // Render sprite
 func (w *Window) RenderSprite(sprite *Sprite, x int32, y int32) error {
-	return w.renderer.Copy(
-		sprite.texture.Texture,
-		&sprite.srcCrop,
-		&sdl.Rect{X: x, Y: y, W: sprite.W, H: sprite.H},
-	)
+	return w.Renderer.RenderTexture(RenderContext{}, x, y, sprite.texture, TextureRenderMode_DEFAULT)
 }

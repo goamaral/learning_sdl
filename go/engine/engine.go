@@ -11,6 +11,7 @@ func Init() error {
 
 // Quit engine
 func Quit() {
+	destroyViewports()
 	sdl.Quit()
 }
 

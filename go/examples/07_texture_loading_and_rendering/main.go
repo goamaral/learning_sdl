@@ -44,19 +44,19 @@ func main() {
 	}
 
 	// Render texture
-	err = window.Reset(nil)
+	err = window.Renderer.Reset()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reset window")
 		return
 	}
-	err = window.RenderTexture(&texture, 0, 0)
+	err = window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &texture, engine.TextureRenderMode_DEFAULT)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render texture")
 		return
 	}
 
 	// Present
-	window.Present()
+	window.Renderer.Present()
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }

@@ -43,29 +43,43 @@ func main() {
 	}
 
 	// Create top left viewport
-	topLeftViewport := window.CreateViewport(0, 0, window.W/2, window.H/2)
+	topLeftViewport := engine.NewViewport(0, 0, window.W/2, window.H/2)
 
 	// Create top right viewport
-	topRightViewport := window.CreateViewport(window.W/2, 0, window.W/2, window.H/2)
+	topRightViewport := engine.NewViewport(window.W/2, 0, window.W/2, window.H/2)
 
 	// Create bottom viewport
-	bottomViewport := window.CreateViewport(0, window.H/2, window.W, window.H/2)
+	bottomViewport := engine.NewViewport(0, window.H/2, window.W, window.H/2)
 
 	// Reset window
-	err = window.Reset(nil)
+	err = window.Renderer.Reset()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to reset window")
 		return
 	}
 
 	// Render texture to every viewport
-	topLeftViewport.RenderTexture(&texture, 0, 0)
-	topLeftViewport.RenderTexture(&texture, 0, 0)
-	topRightViewport.RenderTexture(&texture, 0, 0)
-	bottomViewport.RenderTexture(&texture, 0, 0)
+	window.Renderer.RenderTexture(
+		engine.RenderContext{Viewport: topLeftViewport},
+		0, 0,
+		&texture,
+		engine.TextureRenderMode_STRETCH,
+	)
+	window.Renderer.RenderTexture(
+		engine.RenderContext{Viewport: topRightViewport},
+		0, 0,
+		&texture,
+		engine.TextureRenderMode_STRETCH,
+	)
+	window.Renderer.RenderTexture(
+		engine.RenderContext{Viewport: bottomViewport},
+		0, 0,
+		&texture,
+		engine.TextureRenderMode_STRETCH,
+	)
 
 	// Present
-	window.Present()
+	window.Renderer.Present()
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }

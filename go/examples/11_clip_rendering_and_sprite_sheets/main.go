@@ -52,10 +52,10 @@ func main() {
 	bottomLeftSprite := spriteMap.GetSprite(1, 0)
 	bottomRightSprite := spriteMap.GetSprite(1, 1)
 
-	// Reset window
-	err = window.Reset(nil)
+	// Reset renderer
+	err = window.Renderer.Reset()
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset window")
+		log.Error().Err(err).Msg("Failed to reset renderer")
 		return
 	}
 
@@ -82,7 +82,7 @@ func main() {
 	}
 
 	// Present
-	window.Present()
+	window.Renderer.Present()
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }

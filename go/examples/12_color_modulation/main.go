@@ -47,9 +47,9 @@ func main() {
 
 	// Run event loop
 	engine.EventLoop(func(event sdl.Event) bool {
-		err = window.Reset(nil)
+		err = window.Renderer.Reset()
 		if err != nil {
-			log.Error().Err(err).Msg("Failed to reset window")
+			log.Error().Err(err).Msg("Failed to reset renderer")
 			return false
 		}
 
@@ -83,12 +83,12 @@ func main() {
 			}
 		}
 
-		err = window.RenderTexture(&texture, 0, 0)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &texture, engine.TextureRenderMode_DEFAULT)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture")
 			return false
 		}
-		window.Present()
+		window.Renderer.Present()
 
 		return true
 	})

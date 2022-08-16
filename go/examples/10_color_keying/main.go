@@ -55,19 +55,19 @@ func main() {
 		return
 	}
 
-	// Reset window
-	err = window.Reset(nil)
+	// Reset renderer
+	err = window.Renderer.Reset()
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset window")
+		log.Error().Err(err).Msg("Failed to reset renderer")
 		return
 	}
 
 	// Render texture to every viewport
-	window.RenderTexture(&backgroundTexture, 0, 0)
-	window.RenderTexture(&playerTexture, 240, 190)
+	window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &backgroundTexture, engine.TextureRenderMode_DEFAULT)
+	window.Renderer.RenderTexture(engine.RenderContext{}, 240, 190, &playerTexture, engine.TextureRenderMode_DEFAULT)
 
 	// Present
-	window.Present()
+	window.Renderer.Present()
 	engine.ProcessEvents(nil)
 	sdl.Delay(2000)
 }
