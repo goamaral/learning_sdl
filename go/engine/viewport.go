@@ -4,19 +4,19 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-var viewports map[uint32]*Viewport = map[uint32]*Viewport{}
-var nextViewportID uint32
+var viewports map[uint]*Viewport = map[uint]*Viewport{}
+var nextViewportId uint
 
 type Viewport struct {
 	sdl.Rect
-	id        uint32
+	id        uint
 	destroyed bool
 }
 
 /* PRIVATE */
 func (v *Viewport) save() *Viewport {
-	v.id = nextViewportID
-	nextViewportID += 1
+	v.id = nextViewportId
+	nextViewportId += 1
 	viewports[v.id] = v
 	return v
 }

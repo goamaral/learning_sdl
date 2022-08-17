@@ -41,7 +41,7 @@ func main() {
 	surface.SetTransparentColor(engine.ColorByName[engine.ColorName_CYAN])
 
 	// Convert surface to texture
-	texture, err := window.ConvertSurfaceToTexture(surface.ID)
+	texture, err := window.ConvertSurfaceToTexture(surface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return

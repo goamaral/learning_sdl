@@ -85,13 +85,13 @@ func (r Renderer) Present() {
 }
 
 // Create texture from surface
-func (r Renderer) CreateTextureFromSurface(surface Surface) (Texture, error) {
-	sdlTexture, err := r.renderer.CreateTextureFromSurface(surface.Surface)
+func (r Renderer) CreateTextureFromSurface(surface *Surface) (Texture, error) {
+	sdlTexture, err := r.renderer.CreateTextureFromSurface(surface.getSdlSurface())
 	if err != nil {
 		return Texture{}, err
 	}
 
-	return Texture{W: surface.Surface.W, H: surface.Surface.H, Texture: sdlTexture}, nil
+	return Texture{W: surface.getSdlSurface().W, H: surface.getSdlSurface().H, Texture: sdlTexture}, nil
 }
 
 // Render texture

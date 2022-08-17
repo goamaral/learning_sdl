@@ -41,7 +41,7 @@ func main() {
 	// Event loop
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		// Render surface not scaled
-		err = window.RenderSurface(surface.ID, false)
+		err = window.RenderSurface(surface, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render not scaled surface")
 			return false
@@ -49,7 +49,7 @@ func main() {
 		time.Sleep(2 * time.Second)
 
 		// Render surface scaled
-		err = window.RenderSurface(surface.ID, true)
+		err = window.RenderSurface(surface, true)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render scaled surface")
 			return false

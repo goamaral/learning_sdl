@@ -9,82 +9,52 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-// Save surface
-func (w *Window) SaveSurface(surface *Surface) {
-	surface.ID = w.GetNextResourceID()
-	w.surfaces[surface.ID] = *surface
-}
-
-// Get surface
-func (w *Window) GetSurface(id uint32) (Surface, error) {
-	surface, exists := w.surfaces[id]
-	if !exists {
-		return surface, errors.Errorf("surface %d not found", id)
-	}
-
-	return surface, nil
-}
-
-// Destroy surface
-func (w *Window) DestroySurface(id uint32) error {
-	surface, exists := w.surfaces[id]
-	if !exists {
-		return errors.Errorf("surface %d not found", id)
-	}
-
-	delete(w.surfaces, id)
-	surface.Free()
-
-	return nil
-}
-
-// Load surface (supports bmp, png)
-func (w *Window) LoadSurface(path string) (surface Surface, err error) {
+// Supports bmp, png)
+func (w *Window) LoadSurface(path string) (*Surface, error) {
 	pathParts := strings.Split(path, ".")
+	extension := pathParts[len(pathParts)-1]
+	var sdlSurface *sdl.Surface
+	var err error
 
-	switch pathParts[len(pathParts)-1] {
+	switch extension {
 	case "bmp":
-		surface.Surface, err = sdl.LoadBMP(path)
+		sdlSurface, err = sdl.LoadBMP(path)
 		if err != nil {
-			return surface, errors.Wrap(err, "failed to load surface from bmp")
+			return nil, errors.Wrap(err, "failed to load bmp surface")
 		}
 	case "png":
-		surface.Surface, err = img.Load(path)
+		sdlSurface, err = img.Load(path)
 		if err != nil {
-			return surface, errors.Wrap(err, "failed to load surface from png")
+			return nil, errors.Wrap(err, "failed to load png surface")
 		}
+	default:
+		return nil, errors.Errorf("unsupported surface format %s")
 	}
 
-	err = surface.OptimizeSurface(w.surface.Format)
+	surface := NewSurface(sdlSurface)
+
+	err = surface.OptimizeSurface(w)
 	if err != nil {
 		log.Warn().Err(err).Str("path", path).Msg("Failed to optimize loaded surface")
 	}
 
-	w.SaveSurface(&surface)
-
 	return surface, nil
 }
 
-// Render surface
-func (w *Window) RenderSurface(id uint32, scaled bool) error {
-	surface, err := w.GetSurface(id)
-	if err != nil {
-		return errors.Wrap(err, "failed to get surface")
-	}
-
+func (w *Window) RenderSurface(surface *Surface, scaled bool) error {
 	if scaled {
-		err := surface.BlitScaled(nil, w.surface, nil)
+		err := surface.getSdlSurface().BlitScaled(nil, w.surface, nil)
 		if err != nil {
 			return errors.Wrap(err, "failed to copy scaled surface to window surface")
 		}
 	} else {
-		err := surface.Blit(nil, w.surface, nil)
+		err := surface.getSdlSurface().Blit(nil, w.surface, nil)
 		if err != nil {
 			return errors.Wrap(err, "failed to copy surface to window surface")
 		}
 	}
 
-	err = w.UpdateSurface()
+	err := w.UpdateSurface()
 	if err != nil {
 		return errors.Wrap(err, "failed to render window surface")
 	}
@@ -92,14 +62,7 @@ func (w *Window) RenderSurface(id uint32, scaled bool) error {
 	return nil
 }
 
-// Convert surface to texture
-func (w *Window) ConvertSurfaceToTexture(id uint32) (Texture, error) {
-	// Get surface
-	surface, err := w.GetSurface(id)
-	if err != nil {
-		return Texture{}, errors.Wrap(err, "failed to get surface")
-	}
-
+func (w *Window) ConvertSurfaceToTexture(surface *Surface) (Texture, error) {
 	// Create texture from surface
 	texture, err := w.Renderer.CreateTextureFromSurface(surface)
 	if err != nil {

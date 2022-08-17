@@ -42,12 +42,12 @@ func main() {
 	}
 
 	// Convert surfaces to textures
-	fadeInTexture, err := window.ConvertSurfaceToTexture(fadeInSurface.ID)
+	fadeInTexture, err := window.ConvertSurfaceToTexture(fadeInSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert fade in surface to texture")
 		return
 	}
-	fadeOutTexture, err := window.ConvertSurfaceToTexture(fadeOutSurface.ID)
+	fadeOutTexture, err := window.ConvertSurfaceToTexture(fadeOutSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert fade out surface to texture")
 		return

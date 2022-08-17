@@ -46,12 +46,12 @@ func main() {
 	playerSurface.SetTransparentColor(engine.ColorByName[engine.ColorName_CYAN])
 
 	// Convert surfaces to textures
-	backgroundTexture, err := window.ConvertSurfaceToTexture(backgroundSurface.ID)
+	backgroundTexture, err := window.ConvertSurfaceToTexture(backgroundSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert background surface to texture")
 		return
 	}
-	playerTexture, err := window.ConvertSurfaceToTexture(playerSurface.ID)
+	playerTexture, err := window.ConvertSurfaceToTexture(playerSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert player surface to texture")
 		return

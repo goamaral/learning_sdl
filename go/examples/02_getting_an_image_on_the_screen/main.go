@@ -41,7 +41,7 @@ func main() {
 	// Event loop
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		// Render surface
-		err = window.RenderSurface(surface.ID, false)
+		err = window.RenderSurface(surface, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render surface")
 			return false

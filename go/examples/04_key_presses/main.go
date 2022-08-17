@@ -29,7 +29,7 @@ func main() {
 	}
 	defer window.Destroy()
 
-	// Load surfaces and map ids
+	// Load surfaces
 	surfacePaths := map[string]string{
 		"default": "../../../resources/images/default.bmp",
 		"up":      "../../../resources/images/up.bmp",
@@ -37,17 +37,10 @@ func main() {
 		"down":    "../../../resources/images/down.bmp",
 		"left":    "../../../resources/images/left.bmp",
 	}
-	surfaceIds := map[string]uint32{
-		"default": 0,
-		"up":      0,
-		"right":   0,
-		"down":    0,
-		"left":    0,
-	}
-
+	surfaces := map[string]*engine.Surface{}
 	for name, path := range surfacePaths {
 		surface, err := window.LoadSurface(path)
-		surfaceIds[name] = surface.ID
+		surfaces[name] = surface
 		if err != nil {
 			log.Error().Err(err).Msgf("Failed to load surface %s at %s", name, path)
 			return
@@ -55,7 +48,7 @@ func main() {
 	}
 
 	// Render default surface
-	err = window.RenderSurface(surfaceIds["default"], false)
+	err = window.RenderSurface(surfaces["default"], false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to render default surface")
 		return
@@ -63,7 +56,7 @@ func main() {
 
 	// Run event loop
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
-		var surfaceIdToRender uint32
+		var surface *engine.Surface
 
 		// Events
 		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {
@@ -72,22 +65,22 @@ func main() {
 			case *sdl.KeyboardEvent:
 				switch event.Keysym.Sym {
 				case sdl.K_UP:
-					surfaceIdToRender = surfaceIds["up"]
+					surface = surfaces["up"]
 				case sdl.K_RIGHT:
-					surfaceIdToRender = surfaceIds["right"]
+					surface = surfaces["right"]
 				case sdl.K_DOWN:
-					surfaceIdToRender = surfaceIds["down"]
+					surface = surfaces["down"]
 				case sdl.K_LEFT:
-					surfaceIdToRender = surfaceIds["left"]
+					surface = surfaces["left"]
 				default:
-					surfaceIdToRender = surfaceIds["default"]
+					surface = surfaces["default"]
 				}
 			}
 		}
 
 		// Render
-		if surfaceIdToRender != 0 {
-			err = window.RenderSurface(surfaceIdToRender, false)
+		if surface != nil {
+			err = window.RenderSurface(surface, false)
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to render surface")
 			}

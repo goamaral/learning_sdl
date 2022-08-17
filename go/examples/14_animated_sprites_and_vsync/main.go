@@ -38,7 +38,7 @@ func main() {
 	}
 
 	// Convert surface to texture
-	walkingTexture, err := window.ConvertSurfaceToTexture(walkingSurface.ID)
+	walkingTexture, err := window.ConvertSurfaceToTexture(walkingSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert walking surface to texture")
 		return

@@ -10,27 +10,22 @@ type Window struct {
 	*sdl.Window
 	W        int32
 	H        int32
-	surface  *sdl.Surface
+	surface  *sdl.Surface // TODO: Make it *Surface
 	Renderer *Renderer
 
 	/* Resources */
 	lastResourceID uint32
-	surfaces       map[uint32]Surface
 	textures       map[uint32]Texture
-	viewports      map[uint32]Viewport // Do not need to be deallocated
 	spriteMaps     map[uint32]SpriteMap
 }
 
-// Create window
 func CreateWindow() (Window, error) {
 	var err error
 
 	win := Window{
 		W:          640,
 		H:          480,
-		surfaces:   map[uint32]Surface{},
 		textures:   map[uint32]Texture{},
-		viewports:  map[uint32]Viewport{},
 		spriteMaps: map[uint32]SpriteMap{},
 	}
 
@@ -53,16 +48,7 @@ func CreateWindow() (Window, error) {
 	return win, nil
 }
 
-// Destroy window
 func (w *Window) Destroy() {
-	// Destroy surfaces
-	for id := range w.surfaces {
-		err := w.DestroySurface(id)
-		if err != nil {
-			log.Warn().Err(err).Uint32("id", id).Msg("Failed to destory surface")
-		}
-	}
-
 	// Destroy textures
 	for id := range w.textures {
 		err := w.DestroyTexture(id)
@@ -72,11 +58,14 @@ func (w *Window) Destroy() {
 	}
 }
 
-// Get next resource id
 // FUTURE: Make it thread safe
 func (w *Window) GetNextResourceID() uint32 {
 	nextID := w.lastResourceID + 1
 	w.lastResourceID = nextID
 
 	return nextID
+}
+
+func (w *Window) GetPixelFormat() *sdl.PixelFormat {
+	return w.surface.Format
 }
