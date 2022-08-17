@@ -23,7 +23,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return

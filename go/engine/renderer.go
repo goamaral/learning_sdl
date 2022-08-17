@@ -95,35 +95,44 @@ func (r Renderer) CreateTextureFromSurface(surface *Surface) (Texture, error) {
 }
 
 // Render texture
-type TextureRenderMode uint
+type TextureRenderFlip sdl.RendererFlip
 
 const (
-	TextureRenderMode_DEFAULT TextureRenderMode = iota
-	TextureRenderMode_STRETCH
+	TextureRenderFlip_NONE       = TextureRenderFlip(sdl.FLIP_NONE)
+	TextureRenderFlip_HORIZONTAL = TextureRenderFlip(sdl.FLIP_HORIZONTAL)
+	TextureRenderFlip_VERTICAL   = TextureRenderFlip(sdl.FLIP_VERTICAL)
 )
 
-func (r Renderer) RenderTexture(ctx RenderContext, texture *Texture, x int32, y int32, renderMode TextureRenderMode) error {
+type RenderTextureOptions struct {
+	Stretch bool
+	Flip    TextureRenderFlip
+	Angle   float64
+}
+
+func (r Renderer) RenderTexture(ctx RenderContext, texture *Texture, x int32, y int32, opts *RenderTextureOptions) error {
 	// Apply render context
 	ctx, err := r.applyRenderContext(ctx)
 	if err != nil {
 		return errors.Wrap(err, "failed to apply render context")
 	}
 
-	// Handle render mode
+	// Set default options
+	if opts == nil {
+		opts = &RenderTextureOptions{}
+	}
+
+	// Stretch texture
 	var w, h int32
-	switch renderMode {
-	case TextureRenderMode_DEFAULT:
-		w = texture.W
-		h = texture.H
-	case TextureRenderMode_STRETCH:
+	if opts.Stretch {
 		w = ctx.Viewport.W
 		h = ctx.Viewport.H
-	default:
-		return errors.Errorf("Invalid texture render mode %d", renderMode)
+	} else {
+		w = texture.W
+		h = texture.H
 	}
 
 	// Render texture
-	err = r.renderer.Copy(texture.Texture, nil, &sdl.Rect{X: x, Y: y, W: w, H: h})
+	err = r.renderer.CopyEx(texture.Texture, nil, &sdl.Rect{X: x, Y: y, W: w, H: h}, opts.Angle, nil, sdl.RendererFlip(opts.Flip))
 	if err != nil {
 		return errors.Wrap(err, "failed to render texture")
 	}
@@ -131,7 +140,7 @@ func (r Renderer) RenderTexture(ctx RenderContext, texture *Texture, x int32, y 
 	return nil
 }
 
-func (r Renderer) RenderSprite(ctx RenderContext, sprite *Sprite, x int32, y int32, renderMode TextureRenderMode) error {
+func (r Renderer) RenderSprite(ctx RenderContext, sprite *Sprite, x int32, y int32, strecth bool) error {
 	// Apply render context
 	ctx, err := r.applyRenderContext(ctx)
 	if err != nil {
@@ -140,15 +149,12 @@ func (r Renderer) RenderSprite(ctx RenderContext, sprite *Sprite, x int32, y int
 
 	// Handle render mode
 	var w, h int32
-	switch renderMode {
-	case TextureRenderMode_DEFAULT:
-		w = sprite.W
-		h = sprite.H
-	case TextureRenderMode_STRETCH:
+	if strecth {
 		w = ctx.Viewport.W
 		h = ctx.Viewport.H
-	default:
-		return errors.Errorf("Invalid texture render mode %d", renderMode)
+	} else {
+		w = sprite.W
+		h = sprite.H
 	}
 
 	// Render texture

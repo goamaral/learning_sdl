@@ -19,7 +19,7 @@ type Window struct {
 	spriteMaps     map[uint32]SpriteMap
 }
 
-func CreateWindow() (Window, error) {
+func CreateWindow(useVsync bool) (Window, error) {
 	var err error
 
 	win := Window{
@@ -34,16 +34,22 @@ func CreateWindow() (Window, error) {
 		return win, errors.Wrap(err, "failed to create window")
 	}
 
-	win.surface, err = win.Window.GetSurface()
-	if err != nil {
-		return win, errors.Wrap(err, "failed to get window surface")
-	}
-
 	sdlRenderer, err := win.Window.GetRenderer()
 	if err != nil {
 		return win, errors.Wrap(err, "failed to get window renderer")
 	}
+	if useVsync {
+		sdlRenderer, err = sdl.CreateRenderer(win.Window, -1, sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC)
+		if err != nil {
+			return win, errors.Wrap(err, "failed to create renderer")
+		}
+	}
 	win.Renderer = NewRenderer(sdlRenderer)
+
+	win.surface, err = win.Window.GetSurface()
+	if err != nil {
+		return win, errors.Wrap(err, "failed to get window surface")
+	}
 
 	return win, nil
 }

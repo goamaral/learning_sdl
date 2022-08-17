@@ -24,7 +24,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
@@ -53,7 +53,7 @@ func main() {
 		}
 
 		// Render texture
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture")
 			return false

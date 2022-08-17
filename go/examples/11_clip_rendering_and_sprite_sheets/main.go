@@ -23,7 +23,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
@@ -62,22 +62,22 @@ func main() {
 		}
 
 		// Render sprites
-		err = window.Renderer.RenderSprite(engine.RenderContext{}, &topLeftSprite, 0, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &topLeftSprite, 0, 0, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render top left sprite")
 			return false
 		}
-		err = window.Renderer.RenderSprite(engine.RenderContext{}, &topRightSprite, window.W-topRightSprite.W, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &topRightSprite, window.W-topRightSprite.W, 0, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render top right sprite")
 			return false
 		}
-		err = window.Renderer.RenderSprite(engine.RenderContext{}, &bottomLeftSprite, 0, window.H-bottomLeftSprite.H, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &bottomLeftSprite, 0, window.H-bottomLeftSprite.H, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render bottom left sprite")
 			return false
 		}
-		err = window.Renderer.RenderSprite(engine.RenderContext{}, &bottomRightSprite, window.W-topRightSprite.W, window.H-bottomLeftSprite.H, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &bottomRightSprite, window.W-topRightSprite.W, window.H-bottomLeftSprite.H, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render bottom right sprite")
 			return false

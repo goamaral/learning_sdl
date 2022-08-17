@@ -23,7 +23,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(true)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
@@ -47,24 +47,27 @@ func main() {
 	// Create sprite map
 	spriteMap := window.CreateSpriteMap(&walkingTexture, 64, 205)
 
-	// Run event loop
 	var currentFrame uint
+	x := (window.W - spriteMap.SpriteW) / 2
+	y := (window.H - spriteMap.SpriteH) / 2
+
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		// Process events
+		for getEvent() != nil {
+		}
+
+		// Reset renderer
 		err = window.Renderer.Reset()
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to reset renderer")
 			return false
 		}
 
-		// Process event
-		for getEvent() != nil {
-		}
-
 		// Get current frame sprite
 		sprite := spriteMap.GetSprite(currentFrame % spriteMap.Len())
 
 		// Render sprite
-		err = window.Renderer.RenderSprite(engine.RenderContext{}, &sprite, 0, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &sprite, x, y, false)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render sprite")
 			return false
@@ -72,7 +75,6 @@ func main() {
 
 		window.Renderer.Present()
 		currentFrame += 1
-
 		time.Sleep(time.Second / 10)
 
 		return true

@@ -22,7 +22,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
@@ -62,14 +62,7 @@ func main() {
 
 	var alpha uint8 = 255
 
-	// Run event loop
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
-		err = window.Renderer.Reset()
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to reset renderer")
-			return false
-		}
-
 		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {
 			switch eventType := sdlEvent.(type) {
 			// Key pressed
@@ -83,6 +76,13 @@ func main() {
 			}
 		}
 
+		// Reset renderer
+		err = window.Renderer.Reset()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset renderer")
+			return false
+		}
+
 		// Set fade out texture alpha
 		err = fadeOutTexture.SetAlphaMod(alpha)
 		if err != nil {
@@ -91,12 +91,12 @@ func main() {
 		}
 
 		// Render
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeInTexture, 0, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeInTexture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render fade in texture")
 			return false
 		}
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeOutTexture, 0, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeOutTexture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render fade out texture")
 			return false

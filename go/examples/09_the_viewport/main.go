@@ -23,7 +23,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
@@ -65,7 +65,7 @@ func main() {
 			engine.RenderContext{Viewport: topLeftViewport},
 			&texture,
 			0, 0,
-			engine.TextureRenderMode_STRETCH,
+			&engine.RenderTextureOptions{Stretch: true},
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture to top left viewport")
@@ -77,7 +77,7 @@ func main() {
 			engine.RenderContext{Viewport: topRightViewport},
 			&texture,
 			0, 0,
-			engine.TextureRenderMode_STRETCH,
+			&engine.RenderTextureOptions{Stretch: true},
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture to top right viewport")
@@ -89,7 +89,7 @@ func main() {
 			engine.RenderContext{Viewport: bottomViewport},
 			&texture,
 			0, 0,
-			engine.TextureRenderMode_STRETCH,
+			&engine.RenderTextureOptions{Stretch: true},
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture to bottom viewport")

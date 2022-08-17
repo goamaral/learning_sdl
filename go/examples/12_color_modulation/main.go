@@ -22,7 +22,7 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow()
+	window, err := engine.CreateWindow(false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
@@ -46,12 +46,6 @@ func main() {
 	color := engine.ColorByName[engine.ColorName_WHITE]
 
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
-		err = window.Renderer.Reset()
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to reset renderer")
-			return false
-		}
-
 		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {
 			switch event := sdlEvent.(type) {
 			// Key pressed
@@ -78,6 +72,12 @@ func main() {
 			}
 		}
 
+		err = window.Renderer.Reset()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset renderer")
+			return false
+		}
+
 		// Set color modulation
 		err := texture.SetColorModulation(color)
 		if err != nil {
@@ -86,7 +86,7 @@ func main() {
 		}
 
 		// Render texture
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture")
 			return false
