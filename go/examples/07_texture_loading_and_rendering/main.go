@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
 
@@ -43,20 +45,23 @@ func main() {
 		return
 	}
 
-	// Render texture
-	err = window.Renderer.Reset()
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset window")
-		return
-	}
-	err = window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &texture, engine.TextureRenderMode_DEFAULT)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render texture")
-		return
-	}
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		err = window.Renderer.Reset()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset window")
+			return false
+		}
 
-	// Present
-	window.Renderer.Present()
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+		// Render texture
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render texture")
+			return false
+		}
+
+		window.Renderer.Present()
+		time.Sleep(2 * time.Second)
+
+		return false
+	})
 }

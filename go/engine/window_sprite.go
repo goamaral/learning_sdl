@@ -13,8 +13,3 @@ func (w *Window) CreateSpriteMap(texture *Texture, spriteW int32, spriteH int32)
 
 	return spriteMap
 }
-
-// Render sprite
-func (w *Window) RenderSprite(sprite *Sprite, x int32, y int32) error {
-	return w.Renderer.RenderTexture(RenderContext{}, x, y, sprite.texture, TextureRenderMode_DEFAULT)
-}

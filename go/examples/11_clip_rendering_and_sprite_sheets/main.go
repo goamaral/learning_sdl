@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/Goamaral/learning_sdl/engine"
 	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
@@ -47,42 +49,43 @@ func main() {
 
 	// Create sprite map from texture and get sprites
 	spriteMap := window.CreateSpriteMap(&texture, 100, 100)
-	topLeftSprite := spriteMap.GetSprite(0, 0)
-	topRightSprite := spriteMap.GetSprite(0, 1)
-	bottomLeftSprite := spriteMap.GetSprite(1, 0)
-	bottomRightSprite := spriteMap.GetSprite(1, 1)
+	topLeftSprite := spriteMap.GetSprite(0)
+	topRightSprite := spriteMap.GetSprite(1)
+	bottomLeftSprite := spriteMap.GetSprite(2)
+	bottomRightSprite := spriteMap.GetSprite(3)
 
-	// Reset renderer
-	err = window.Renderer.Reset()
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset renderer")
-		return
-	}
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		err = window.Renderer.Reset()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset renderer")
+			return false
+		}
 
-	// Render sprites
-	err = window.RenderSprite(&topLeftSprite, 0, 0)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render top left sprite")
-		return
-	}
-	err = window.RenderSprite(&topRightSprite, window.W-topRightSprite.W, 0)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render top right sprite")
-		return
-	}
-	err = window.RenderSprite(&bottomLeftSprite, 0, window.H-bottomLeftSprite.H)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render bottom left sprite")
-		return
-	}
-	err = window.RenderSprite(&bottomRightSprite, window.W-topRightSprite.W, window.H-bottomLeftSprite.H)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render bottom right sprite")
-		return
-	}
+		// Render sprites
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &topLeftSprite, 0, 0, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render top left sprite")
+			return false
+		}
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &topRightSprite, window.W-topRightSprite.W, 0, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render top right sprite")
+			return false
+		}
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &bottomLeftSprite, 0, window.H-bottomLeftSprite.H, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render bottom left sprite")
+			return false
+		}
+		err = window.Renderer.RenderSprite(engine.RenderContext{}, &bottomRightSprite, window.W-topRightSprite.W, window.H-bottomLeftSprite.H, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render bottom right sprite")
+			return false
+		}
 
-	// Present
-	window.Renderer.Present()
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+		window.Renderer.Present()
+		time.Sleep(2 * time.Second)
+
+		return false
+	})
 }

@@ -30,7 +30,8 @@ func main() {
 	defer window.Destroy()
 
 	// Run event loop
-	engine.EventLoop(func(event sdl.Event) bool {
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		event := getEvent()
 		switch eventType := event.(type) {
 		// Key pressed
 		case *sdl.KeyboardEvent:

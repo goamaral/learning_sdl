@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
 
@@ -36,21 +38,25 @@ func main() {
 		return
 	}
 
-	// Render surface not scaled
-	err = window.RenderSurface(surface.ID, false)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render not scaled surface")
-		return
-	}
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+	// Event loop
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		// Render surface not scaled
+		err = window.RenderSurface(surface.ID, false)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render not scaled surface")
+			return false
+		}
+		time.Sleep(2 * time.Second)
 
-	// Render surface scaled
-	err = window.RenderSurface(surface.ID, true)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render scaled surface")
-		return
-	}
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+		// Render surface scaled
+		err = window.RenderSurface(surface.ID, true)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render scaled surface")
+			return false
+		}
+		engine.EventLoop(nil)
+		time.Sleep(2 * time.Second)
+
+		return false
+	})
 }

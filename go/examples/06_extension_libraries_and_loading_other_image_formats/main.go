@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
 
@@ -36,14 +38,16 @@ func main() {
 		return
 	}
 
-	// Render surface
-	err = window.RenderSurface(surface.ID, false)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to render surface")
-		return
-	}
-
 	// Process events
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		// Render surface
+		err = window.RenderSurface(surface.ID, false)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render surface")
+			return false
+		}
+		time.Sleep(2 * time.Second)
+
+		return false
+	})
 }

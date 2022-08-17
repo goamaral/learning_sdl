@@ -45,49 +45,53 @@ func main() {
 
 	color := engine.ColorByName[engine.ColorName_WHITE]
 
-	// Run event loop
-	engine.EventLoop(func(event sdl.Event) bool {
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		err = window.Renderer.Reset()
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to reset renderer")
 			return false
 		}
 
-		switch eventType := event.(type) {
-		// Key pressed
-		case *sdl.KeyboardEvent:
-			switch eventType.Keysym.Sym {
-			case sdl.K_q:
-				color.R = uint8(lo.Min([]int16{255, int16(color.R) + 32}))
+		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {
+			switch event := sdlEvent.(type) {
+			// Key pressed
+			case *sdl.KeyboardEvent:
+				switch event.Keysym.Sym {
+				case sdl.K_q:
+					color.R = uint8(lo.Min([]int16{255, int16(color.R) + 32}))
 
-			case sdl.K_a:
-				color.R = uint8(lo.Max([]int16{0, int16(color.R) - 32}))
+				case sdl.K_a:
+					color.R = uint8(lo.Max([]int16{0, int16(color.R) - 32}))
 
-			case sdl.K_w:
-				color.G = uint8(lo.Min([]int16{255, int16(color.G) + 32}))
+				case sdl.K_w:
+					color.G = uint8(lo.Min([]int16{255, int16(color.G) + 32}))
 
-			case sdl.K_s:
-				color.G = uint8(lo.Max([]int16{0, int16(color.G) - 32}))
+				case sdl.K_s:
+					color.G = uint8(lo.Max([]int16{0, int16(color.G) - 32}))
 
-			case sdl.K_e:
-				color.B = uint8(lo.Min([]int16{255, int16(color.B) + 32}))
+				case sdl.K_e:
+					color.B = uint8(lo.Min([]int16{255, int16(color.B) + 32}))
 
-			case sdl.K_d:
-				color.B = uint8(lo.Max([]int16{0, int16(color.B) - 32}))
-			}
-
-			err := texture.SetColorModulation(color)
-			if err != nil {
-				log.Error().Err(err).Msg("Failed to set color modulation")
-				return false
+				case sdl.K_d:
+					color.B = uint8(lo.Max([]int16{0, int16(color.B) - 32}))
+				}
 			}
 		}
 
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &texture, engine.TextureRenderMode_DEFAULT)
+		// Set color modulation
+		err := texture.SetColorModulation(color)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to set color modulation")
+			return false
+		}
+
+		// Render texture
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, engine.TextureRenderMode_DEFAULT)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture")
 			return false
 		}
+
 		window.Renderer.Present()
 
 		return true

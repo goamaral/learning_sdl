@@ -63,21 +63,23 @@ func main() {
 	var alpha uint8 = 255
 
 	// Run event loop
-	engine.EventLoop(func(event sdl.Event) bool {
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		err = window.Renderer.Reset()
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to reset renderer")
 			return false
 		}
 
-		switch eventType := event.(type) {
-		// Key pressed
-		case *sdl.KeyboardEvent:
-			switch eventType.Keysym.Sym {
-			case sdl.K_w:
-				alpha = uint8(lo.Min([]int16{255, int16(alpha) + 32}))
-			case sdl.K_s:
-				alpha = uint8(lo.Max([]int16{0, int16(alpha) - 32}))
+		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {
+			switch eventType := sdlEvent.(type) {
+			// Key pressed
+			case *sdl.KeyboardEvent:
+				switch eventType.Keysym.Sym {
+				case sdl.K_w:
+					alpha = uint8(lo.Min([]int16{255, int16(alpha) + 32}))
+				case sdl.K_s:
+					alpha = uint8(lo.Max([]int16{0, int16(alpha) - 32}))
+				}
 			}
 		}
 
@@ -89,16 +91,17 @@ func main() {
 		}
 
 		// Render
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &fadeInTexture, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeInTexture, 0, 0, engine.TextureRenderMode_DEFAULT)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render fade in texture")
 			return false
 		}
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &fadeOutTexture, engine.TextureRenderMode_DEFAULT)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeOutTexture, 0, 0, engine.TextureRenderMode_DEFAULT)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render fade out texture")
 			return false
 		}
+
 		window.Renderer.Present()
 
 		return true

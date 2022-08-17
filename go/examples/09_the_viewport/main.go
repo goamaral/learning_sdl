@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/Goamaral/learning_sdl/engine"
 	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
@@ -51,35 +53,52 @@ func main() {
 	// Create bottom viewport
 	bottomViewport := engine.NewViewport(0, window.H/2, window.W, window.H/2)
 
-	// Reset window
-	err = window.Renderer.Reset()
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset window")
-		return
-	}
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		err = window.Renderer.Reset()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset window")
+			return false
+		}
 
-	// Render texture to every viewport
-	window.Renderer.RenderTexture(
-		engine.RenderContext{Viewport: topLeftViewport},
-		0, 0,
-		&texture,
-		engine.TextureRenderMode_STRETCH,
-	)
-	window.Renderer.RenderTexture(
-		engine.RenderContext{Viewport: topRightViewport},
-		0, 0,
-		&texture,
-		engine.TextureRenderMode_STRETCH,
-	)
-	window.Renderer.RenderTexture(
-		engine.RenderContext{Viewport: bottomViewport},
-		0, 0,
-		&texture,
-		engine.TextureRenderMode_STRETCH,
-	)
+		// Render texture to top left viewport
+		err = window.Renderer.RenderTexture(
+			engine.RenderContext{Viewport: topLeftViewport},
+			&texture,
+			0, 0,
+			engine.TextureRenderMode_STRETCH,
+		)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render texture to top left viewport")
+			return false
+		}
 
-	// Present
-	window.Renderer.Present()
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+		// Render texture to top right viewport
+		window.Renderer.RenderTexture(
+			engine.RenderContext{Viewport: topRightViewport},
+			&texture,
+			0, 0,
+			engine.TextureRenderMode_STRETCH,
+		)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render texture to top right viewport")
+			return false
+		}
+
+		// Render texture to bottom viewport
+		window.Renderer.RenderTexture(
+			engine.RenderContext{Viewport: bottomViewport},
+			&texture,
+			0, 0,
+			engine.TextureRenderMode_STRETCH,
+		)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render texture to bottom viewport")
+			return false
+		}
+
+		window.Renderer.Present()
+		time.Sleep(2 * time.Second)
+
+		return false
+	})
 }

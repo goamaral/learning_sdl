@@ -16,26 +16,29 @@ func Quit() {
 }
 
 // Event loop
-func EventLoop(eventHandler func(sdl.Event) bool) {
-	for ProcessEvents(eventHandler) {
+func EventLoop(renderHandler func(func() sdl.Event) bool) {
+	if renderHandler != nil {
+		running := true
+		ok := true
+		for running && ok {
+			running = renderHandler(func() sdl.Event {
+				var sdlEvent sdl.Event
+				ok, sdlEvent = getEvent()
+
+				return sdlEvent
+			})
+		}
 	}
 }
 
-// Process events
-func ProcessEvents(eventHandler func(sdl.Event) bool) bool {
-	shouldContinue := true
-
-	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-		switch event.(type) {
-		// Window closed
-		case *sdl.QuitEvent:
-			shouldContinue = false
-		default:
-			if eventHandler != nil {
-				shouldContinue = shouldContinue && eventHandler(event)
-			}
+// Get events
+func getEvent() (bool, sdl.Event) {
+	sdlEvent := sdl.PollEvent()
+	if sdlEvent != nil {
+		if sdlEvent.GetType() == sdl.QUIT {
+			return false, nil
 		}
 	}
 
-	return shouldContinue
+	return true, sdlEvent
 }

@@ -62,36 +62,34 @@ func main() {
 	}
 
 	// Run event loop
-	engine.EventLoop(func(event sdl.Event) bool {
-		switch eventType := event.(type) {
-		// Key pressed
-		case *sdl.KeyboardEvent:
-			switch eventType.Keysym.Sym {
-			case sdl.K_UP:
-				err = window.RenderSurface(surfaceIds["up"], false)
-				if err != nil {
-					log.Error().Err(err).Msg("Failed to render up surface")
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		var surfaceIdToRender uint32
+
+		// Events
+		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {
+			switch event := sdlEvent.(type) {
+			// Key press
+			case *sdl.KeyboardEvent:
+				switch event.Keysym.Sym {
+				case sdl.K_UP:
+					surfaceIdToRender = surfaceIds["up"]
+				case sdl.K_RIGHT:
+					surfaceIdToRender = surfaceIds["right"]
+				case sdl.K_DOWN:
+					surfaceIdToRender = surfaceIds["down"]
+				case sdl.K_LEFT:
+					surfaceIdToRender = surfaceIds["left"]
+				default:
+					surfaceIdToRender = surfaceIds["default"]
 				}
-			case sdl.K_RIGHT:
-				err = window.RenderSurface(surfaceIds["right"], false)
-				if err != nil {
-					log.Error().Err(err).Msg("Failed to render right surface")
-				}
-			case sdl.K_DOWN:
-				err = window.RenderSurface(surfaceIds["down"], false)
-				if err != nil {
-					log.Error().Err(err).Msg("Failed to render down surface")
-				}
-			case sdl.K_LEFT:
-				err = window.RenderSurface(surfaceIds["left"], false)
-				if err != nil {
-					log.Error().Err(err).Msg("Failed to render left surface")
-				}
-			default:
-				err = window.RenderSurface(surfaceIds["default"], false)
-				if err != nil {
-					log.Error().Err(err).Msg("Failed to render default surface")
-				}
+			}
+		}
+
+		// Render
+		if surfaceIdToRender != 0 {
+			err = window.RenderSurface(surfaceIdToRender, false)
+			if err != nil {
+				log.Error().Err(err).Msg("Failed to render surface")
 			}
 		}
 

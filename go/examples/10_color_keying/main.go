@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/Goamaral/learning_sdl/engine"
 	"github.com/rs/zerolog/log"
 	"github.com/veandco/go-sdl2/sdl"
@@ -55,19 +57,30 @@ func main() {
 		return
 	}
 
-	// Reset renderer
-	err = window.Renderer.Reset()
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to reset renderer")
-		return
-	}
+	engine.EventLoop(func(getEvent func() sdl.Event) bool {
+		err = window.Renderer.Reset()
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to reset renderer")
+			return false
+		}
 
-	// Render texture to every viewport
-	window.Renderer.RenderTexture(engine.RenderContext{}, 0, 0, &backgroundTexture, engine.TextureRenderMode_DEFAULT)
-	window.Renderer.RenderTexture(engine.RenderContext{}, 240, 190, &playerTexture, engine.TextureRenderMode_DEFAULT)
+		// Render background texture
+		err := window.Renderer.RenderTexture(engine.RenderContext{}, &backgroundTexture, 0, 0, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render background texture")
+			return false
+		}
 
-	// Present
-	window.Renderer.Present()
-	engine.ProcessEvents(nil)
-	sdl.Delay(2000)
+		// Render player texture
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, &playerTexture, 240, 190, engine.TextureRenderMode_DEFAULT)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to render player texture")
+			return false
+		}
+
+		window.Renderer.Present()
+		time.Sleep(2 * time.Second)
+
+		return false
+	})
 }
