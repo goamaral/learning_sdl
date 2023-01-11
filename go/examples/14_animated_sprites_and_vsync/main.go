@@ -23,12 +23,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(true)
+	window, err := engine.NewWindow(640, 480, true)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surface
 	walkingSurface, err := window.LoadSurface("../../../resources/images/walking.png")
@@ -38,14 +37,14 @@ func main() {
 	}
 
 	// Convert surface to texture
-	walkingTexture, err := window.ConvertSurfaceToTexture(walkingSurface)
+	walkingTexture, err := window.Renderer.SurfaceToTexture(walkingSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert walking surface to texture")
 		return
 	}
 
 	// Create sprite map
-	spriteMap := window.CreateSpriteMap(&walkingTexture, 64, 205)
+	spriteMap := engine.NewSpriteMap(walkingTexture, 64, 205)
 
 	var currentFrame uint
 	x := (window.W - spriteMap.SpriteW) / 2
@@ -53,7 +52,15 @@ func main() {
 
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		// Process events
-		for getEvent() != nil {
+		for event := getEvent(); event != nil; event = getEvent() {
+			switch eventType := event.(type) {
+			// Key pressed
+			case *sdl.KeyboardEvent:
+				switch eventType.Keysym.Sym {
+				case sdl.K_ESCAPE:
+					return false
+				}
+			}
 		}
 
 		// Reset renderer

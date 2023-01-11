@@ -6,19 +6,11 @@ import (
 )
 
 type Renderer struct {
-	renderer         *sdl.Renderer
+	abstractResource
+	sdlRenderer *sdl.Renderer
+
 	defaultViewport  *Viewport
 	defaultDrawColor Color
-}
-
-func NewRenderer(nativeRenderer *sdl.Renderer) *Renderer {
-	sdlViewport := nativeRenderer.GetViewport()
-
-	return &Renderer{
-		renderer:         nativeRenderer,
-		defaultViewport:  NewViewportFromSdlRect(sdlViewport),
-		defaultDrawColor: ColorByName[ColorName_BLACK],
-	}
 }
 
 type RenderContext struct {
@@ -26,19 +18,49 @@ type RenderContext struct {
 	DrawColor *Color
 }
 
-/* PRIVATE */
-// Set draw color
-func (r Renderer) setDrawColor(color Color) error {
-	return r.renderer.SetDrawColor(color.R, color.G, color.B, color.A)
+type RenderTextureFlip sdl.RendererFlip
+
+const (
+	RenderTextureFlip_NONE       = RenderTextureFlip(sdl.FLIP_NONE)
+	RenderTextureFlip_HORIZONTAL = RenderTextureFlip(sdl.FLIP_HORIZONTAL)
+	RenderTextureFlip_VERTICAL   = RenderTextureFlip(sdl.FLIP_VERTICAL)
+)
+
+type RenderTextureOptions struct {
+	Stretch bool
+	Flip    RenderTextureFlip
+	Angle   float64
 }
 
-// Apply render context
+type RenderGeometryMode uint
+
+const (
+	RenderGeometryMode_DEFAULT RenderGeometryMode = iota
+	RenderGeometryMode_FILL
+	RenderGeometryMode_OUTLINE
+)
+
+/* PRIVATE */
+var rendererManager = newResourceManager()
+
+func newRenderer(sdlRenderer *sdl.Renderer) *Renderer {
+	return rendererManager.Save(&Renderer{
+		sdlRenderer:      sdlRenderer,
+		defaultViewport:  NewViewportFromSdlRect(sdlRenderer.GetViewport()),
+		defaultDrawColor: ColorByName[ColorName_BLACK],
+	}).(*Renderer)
+}
+
+func (r Renderer) setDrawColor(color Color) error {
+	return r.sdlRenderer.SetDrawColor(color.R, color.G, color.B, color.A)
+}
+
 func (r Renderer) applyRenderContext(ctx RenderContext) (RenderContext, error) {
 	// Set viewport
 	if ctx.Viewport == nil {
 		ctx.Viewport = r.defaultViewport
 	}
-	err := r.renderer.SetViewport((*sdl.Rect)(&ctx.Viewport.Rect))
+	err := r.sdlRenderer.SetViewport((*sdl.Rect)(&ctx.Viewport.Rect))
 	if err != nil {
 		return ctx, errors.Wrap(err, "failed to set viewport")
 	}
@@ -56,7 +78,14 @@ func (r Renderer) applyRenderContext(ctx RenderContext) (RenderContext, error) {
 }
 
 /* PUBLIC */
-// Reset renderer
+func (r *Renderer) Destroy() {
+	if !r.destroyed {
+		r.destroyed = true
+		delete(rendererManager.resources, r.id)
+		r.sdlRenderer.Destroy()
+	}
+}
+
 func (r Renderer) Reset() error {
 	// Reset draw color
 	err := r.setDrawColor(r.defaultDrawColor)
@@ -65,13 +94,13 @@ func (r Renderer) Reset() error {
 	}
 
 	// Reset viewport
-	err = r.renderer.SetViewport((*sdl.Rect)(&r.defaultViewport.Rect))
+	err = r.sdlRenderer.SetViewport((*sdl.Rect)(&r.defaultViewport.Rect))
 	if err != nil {
 		return errors.Wrap(err, "failed to reset renderer viewport")
 	}
 
 	// Clear renderer
-	err = r.renderer.Clear()
+	err = r.sdlRenderer.Clear()
 	if err != nil {
 		return errors.Wrap(err, "failed to reset renderer")
 	}
@@ -79,34 +108,17 @@ func (r Renderer) Reset() error {
 	return nil
 }
 
-// Present renderer
 func (r Renderer) Present() {
-	r.renderer.Present()
+	r.sdlRenderer.Present()
 }
 
-// Create texture from surface
-func (r Renderer) CreateTextureFromSurface(surface *Surface) (Texture, error) {
-	sdlTexture, err := r.renderer.CreateTextureFromSurface(surface.getSdlSurface())
+func (r Renderer) SurfaceToTexture(surface *Surface) (*Texture, error) {
+	sdlTexture, err := r.sdlRenderer.CreateTextureFromSurface(surface.sdlSurface)
 	if err != nil {
-		return Texture{}, err
+		return nil, err
 	}
 
-	return Texture{W: surface.getSdlSurface().W, H: surface.getSdlSurface().H, Texture: sdlTexture}, nil
-}
-
-// Render texture
-type TextureRenderFlip sdl.RendererFlip
-
-const (
-	TextureRenderFlip_NONE       = TextureRenderFlip(sdl.FLIP_NONE)
-	TextureRenderFlip_HORIZONTAL = TextureRenderFlip(sdl.FLIP_HORIZONTAL)
-	TextureRenderFlip_VERTICAL   = TextureRenderFlip(sdl.FLIP_VERTICAL)
-)
-
-type RenderTextureOptions struct {
-	Stretch bool
-	Flip    TextureRenderFlip
-	Angle   float64
+	return newTexture(sdlTexture, surface.sdlSurface.W, surface.sdlSurface.H), nil
 }
 
 func (r Renderer) RenderTexture(ctx RenderContext, texture *Texture, x int32, y int32, opts *RenderTextureOptions) error {
@@ -132,7 +144,7 @@ func (r Renderer) RenderTexture(ctx RenderContext, texture *Texture, x int32, y 
 	}
 
 	// Render texture
-	err = r.renderer.CopyEx(texture.Texture, nil, &sdl.Rect{X: x, Y: y, W: w, H: h}, opts.Angle, nil, sdl.RendererFlip(opts.Flip))
+	err = r.sdlRenderer.CopyEx(texture.sdlTexture, nil, &sdl.Rect{X: x, Y: y, W: w, H: h}, opts.Angle, nil, sdl.RendererFlip(opts.Flip))
 	if err != nil {
 		return errors.Wrap(err, "failed to render texture")
 	}
@@ -158,7 +170,7 @@ func (r Renderer) RenderSprite(ctx RenderContext, sprite *Sprite, x int32, y int
 	}
 
 	// Render texture
-	err = r.renderer.Copy(sprite.Texture.Texture, &sprite.srcCrop, &sdl.Rect{X: x, Y: y, W: w, H: h})
+	err = r.sdlRenderer.Copy(sprite.Texture.sdlTexture, &sprite.srcCrop, &sdl.Rect{X: x, Y: y, W: w, H: h})
 	if err != nil {
 		return errors.Wrap(err, "failed to render texture")
 	}
@@ -166,16 +178,7 @@ func (r Renderer) RenderSprite(ctx RenderContext, sprite *Sprite, x int32, y int
 	return nil
 }
 
-// Render rectangle
-type GeometryRenderMode uint
-
-const (
-	GeometryRenderMode_DEFAULT GeometryRenderMode = iota
-	GeometryRenderMode_FILL
-	GeometryRenderMode_OUTLINE
-)
-
-func (r Renderer) RenderRectangle(ctx RenderContext, rect Rectangle, renderMode GeometryRenderMode) error {
+func (r Renderer) RenderRectangle(ctx RenderContext, rect Rectangle, renderMode RenderGeometryMode) error {
 	// Apply render context
 	ctx, err := r.applyRenderContext(ctx)
 	if err != nil {
@@ -184,11 +187,11 @@ func (r Renderer) RenderRectangle(ctx RenderContext, rect Rectangle, renderMode 
 
 	// Render rectangle
 	switch renderMode {
-	case GeometryRenderMode_DEFAULT:
-	case GeometryRenderMode_FILL:
-		err = r.renderer.FillRect((*sdl.Rect)(&rect))
-	case GeometryRenderMode_OUTLINE:
-		err = r.renderer.DrawRect((*sdl.Rect)(&rect))
+	case RenderGeometryMode_DEFAULT:
+	case RenderGeometryMode_FILL:
+		err = r.sdlRenderer.FillRect((*sdl.Rect)(&rect))
+	case RenderGeometryMode_OUTLINE:
+		err = r.sdlRenderer.DrawRect((*sdl.Rect)(&rect))
 	default:
 		return errors.Errorf("Invalid geometry render mode %d", renderMode)
 	}
@@ -199,7 +202,6 @@ func (r Renderer) RenderRectangle(ctx RenderContext, rect Rectangle, renderMode 
 	return nil
 }
 
-// Render line
 func (r Renderer) RenderLine(ctx RenderContext, x1, y1, x2, y2 int32) error {
 	// Apply render context
 	ctx, err := r.applyRenderContext(ctx)
@@ -208,7 +210,7 @@ func (r Renderer) RenderLine(ctx RenderContext, x1, y1, x2, y2 int32) error {
 	}
 
 	// Render line
-	err = r.renderer.DrawLine(x1, y1, x2, y2)
+	err = r.sdlRenderer.DrawLine(x1, y1, x2, y2)
 	if err != nil {
 		return errors.Wrap(err, "failed to render line")
 	}
@@ -216,7 +218,6 @@ func (r Renderer) RenderLine(ctx RenderContext, x1, y1, x2, y2 int32) error {
 	return nil
 }
 
-// Render point
 func (r Renderer) RenderPoint(ctx RenderContext, x, y int32) error {
 	// Apply render context
 	ctx, err := r.applyRenderContext(ctx)
@@ -225,7 +226,7 @@ func (r Renderer) RenderPoint(ctx RenderContext, x, y int32) error {
 	}
 
 	// Render point
-	err = r.renderer.DrawPoint(x, y)
+	err = r.sdlRenderer.DrawPoint(x, y)
 	if err != nil {
 		return errors.Wrap(err, "failed to render line")
 	}

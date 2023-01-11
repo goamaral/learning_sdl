@@ -23,12 +23,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surface
 	surface, err := window.LoadSurface("../../../resources/images/texture.png")
@@ -38,7 +37,7 @@ func main() {
 	}
 
 	// Convert surface to texture
-	texture, err := window.ConvertSurfaceToTexture(surface)
+	texture, err := window.Renderer.SurfaceToTexture(surface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return
@@ -63,7 +62,7 @@ func main() {
 		// Render texture to top left viewport
 		err = window.Renderer.RenderTexture(
 			engine.RenderContext{Viewport: topLeftViewport},
-			&texture,
+			texture,
 			0, 0,
 			&engine.RenderTextureOptions{Stretch: true},
 		)
@@ -75,7 +74,7 @@ func main() {
 		// Render texture to top right viewport
 		window.Renderer.RenderTexture(
 			engine.RenderContext{Viewport: topRightViewport},
-			&texture,
+			texture,
 			0, 0,
 			&engine.RenderTextureOptions{Stretch: true},
 		)
@@ -87,7 +86,7 @@ func main() {
 		// Render texture to bottom viewport
 		window.Renderer.RenderTexture(
 			engine.RenderContext{Viewport: bottomViewport},
-			&texture,
+			texture,
 			0, 0,
 			&engine.RenderTextureOptions{Stretch: true},
 		)

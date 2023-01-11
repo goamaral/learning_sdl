@@ -5,35 +5,37 @@ import (
 )
 
 type SpriteMap struct {
-	ID         uint32
-	sdlTexture *Texture
-	SpriteW    int32
-	SpriteH    int32
+	Texture *Texture
+	SpriteW int32
+	SpriteH int32
 }
 
-// Get sprite from sprite map
+type Sprite struct {
+	srcCrop sdl.Rect
+
+	Texture *Texture
+	W       int32
+	H       int32
+}
+
+func NewSpriteMap(texture *Texture, spriteW int32, spriteH int32) SpriteMap {
+	return SpriteMap{Texture: texture, SpriteW: spriteW, SpriteH: spriteH}
+}
+
 func (sm *SpriteMap) GetSprite(index uint) Sprite {
 	return Sprite{
-		Texture: sm.sdlTexture,
+		Texture: sm.Texture,
 		W:       sm.SpriteW,
 		H:       sm.SpriteH,
 		srcCrop: sdl.Rect{
-			X: (int32(index) * sm.SpriteW) % sm.sdlTexture.W,
-			Y: ((int32(index) * sm.SpriteW) / sm.sdlTexture.W) * sm.SpriteH,
+			X: (int32(index) * sm.SpriteW) % sm.Texture.W,
+			Y: ((int32(index) * sm.SpriteW) / sm.Texture.W) * sm.SpriteH,
 			W: int32(sm.SpriteW),
 			H: int32(sm.SpriteH),
 		},
 	}
 }
 
-// Get sprite map length
 func (sm *SpriteMap) Len() uint {
-	return uint((sm.sdlTexture.W / sm.SpriteW) * (sm.sdlTexture.H / sm.SpriteH))
-}
-
-type Sprite struct {
-	W       int32
-	H       int32
-	Texture *Texture // TODO: Make private
-	srcCrop sdl.Rect
+	return uint((sm.Texture.W / sm.SpriteW) * (sm.Texture.H / sm.SpriteH))
 }

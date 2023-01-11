@@ -23,12 +23,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surface
 	surface, err := window.LoadSurface("../../../resources/images/dots.png")
@@ -41,14 +40,14 @@ func main() {
 	surface.SetTransparentColor(engine.ColorByName[engine.ColorName_CYAN])
 
 	// Convert surface to texture
-	texture, err := window.ConvertSurfaceToTexture(surface)
+	texture, err := window.Renderer.SurfaceToTexture(surface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return
 	}
 
 	// Create sprite map from texture and get sprites
-	spriteMap := window.CreateSpriteMap(&texture, 100, 100)
+	spriteMap := engine.NewSpriteMap(texture, 100, 100)
 	topLeftSprite := spriteMap.GetSprite(0)
 	topRightSprite := spriteMap.GetSprite(1)
 	bottomLeftSprite := spriteMap.GetSprite(2)

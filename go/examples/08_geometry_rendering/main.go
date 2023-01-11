@@ -23,12 +23,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		err = window.Renderer.Reset()
@@ -42,7 +41,7 @@ func main() {
 		err = window.Renderer.RenderRectangle(
 			engine.RenderContext{DrawColor: &redColor},
 			(engine.Rectangle)(sdl.Rect{X: window.W / 4, Y: window.H / 4, W: window.W / 2, H: window.H / 2}),
-			engine.GeometryRenderMode_FILL,
+			engine.RenderGeometryMode_FILL,
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render red rectangle fill")
@@ -54,7 +53,7 @@ func main() {
 		err = window.Renderer.RenderRectangle(
 			engine.RenderContext{DrawColor: &greenColor},
 			(engine.Rectangle)(sdl.Rect{X: window.W / 6, Y: window.H / 6, W: window.W * 2 / 3, H: window.H * 2 / 3}),
-			engine.GeometryRenderMode_OUTLINE,
+			engine.RenderGeometryMode_OUTLINE,
 		)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render green rectangle outline")

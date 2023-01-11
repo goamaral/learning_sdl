@@ -6,6 +6,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/Goamaral/learning_sdl/engine"
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
@@ -22,12 +24,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surfaces
 	fadeInSurface, err := window.LoadSurface("../../../resources/images/fadein.png")
@@ -42,12 +43,12 @@ func main() {
 	}
 
 	// Convert surfaces to textures
-	fadeInTexture, err := window.ConvertSurfaceToTexture(fadeInSurface)
+	fadeInTexture, err := window.Renderer.SurfaceToTexture(fadeInSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert fade in surface to texture")
 		return
 	}
-	fadeOutTexture, err := window.ConvertSurfaceToTexture(fadeOutSurface)
+	fadeOutTexture, err := window.Renderer.SurfaceToTexture(fadeOutSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert fade out surface to texture")
 		return
@@ -91,19 +92,20 @@ func main() {
 		}
 
 		// Render
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeInTexture, 0, 0, nil)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, fadeInTexture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render fade in texture")
 			return false
 		}
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &fadeOutTexture, 0, 0, nil)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, fadeOutTexture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render fade out texture")
 			return false
 		}
 
 		window.Renderer.Present()
+		time.Sleep(2 * time.Second)
 
-		return true
+		return false
 	})
 }

@@ -22,12 +22,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surfaces
 	surfacePaths := map[string]string{
@@ -64,6 +63,8 @@ func main() {
 			// Key press
 			case *sdl.KeyboardEvent:
 				switch event.Keysym.Sym {
+				case sdl.K_ESCAPE:
+					return false
 				case sdl.K_UP:
 					surface = surfaces["up"]
 				case sdl.K_RIGHT:

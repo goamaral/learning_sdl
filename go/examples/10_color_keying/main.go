@@ -23,12 +23,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surfaces
 	backgroundSurface, err := window.LoadSurface("../../../resources/images/background.png")
@@ -46,12 +45,12 @@ func main() {
 	playerSurface.SetTransparentColor(engine.ColorByName[engine.ColorName_CYAN])
 
 	// Convert surfaces to textures
-	backgroundTexture, err := window.ConvertSurfaceToTexture(backgroundSurface)
+	backgroundTexture, err := window.Renderer.SurfaceToTexture(backgroundSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert background surface to texture")
 		return
 	}
-	playerTexture, err := window.ConvertSurfaceToTexture(playerSurface)
+	playerTexture, err := window.Renderer.SurfaceToTexture(playerSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert player surface to texture")
 		return
@@ -65,14 +64,14 @@ func main() {
 		}
 
 		// Render background texture
-		err := window.Renderer.RenderTexture(engine.RenderContext{}, &backgroundTexture, 0, 0, nil)
+		err := window.Renderer.RenderTexture(engine.RenderContext{}, backgroundTexture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render background texture")
 			return false
 		}
 
 		// Render player texture
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &playerTexture, 240, 190, nil)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, playerTexture, 240, 190, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render player texture")
 			return false

@@ -21,12 +21,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(true)
+	window, err := engine.NewWindow(640, 480, true)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surface
 	arrowSurface, err := window.LoadSurface("../../../resources/images/arrow.png")
@@ -36,14 +35,14 @@ func main() {
 	}
 
 	// Convert surface to texture
-	arrowTexture, err := window.ConvertSurfaceToTexture(arrowSurface)
+	arrowTexture, err := window.Renderer.SurfaceToTexture(arrowSurface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert arrow surface to texture")
 		return
 	}
 
 	var angle float64
-	flip := engine.TextureRenderFlip_NONE
+	flip := engine.RenderTextureFlip_NONE
 	x := (window.W - arrowTexture.W) / 2
 	y := (window.H - arrowTexture.H) / 2
 
@@ -53,16 +52,18 @@ func main() {
 			// Key pressed
 			case *sdl.KeyboardEvent:
 				switch eventType.Keysym.Sym {
+				case sdl.K_ESCAPE:
+					return false
 				case sdl.K_a:
 					angle -= 60
 				case sdl.K_d:
 					angle += 60
 				case sdl.K_q:
-					flip = engine.TextureRenderFlip_HORIZONTAL
+					flip = engine.RenderTextureFlip_HORIZONTAL
 				case sdl.K_w:
-					flip = engine.TextureRenderFlip_NONE
+					flip = engine.RenderTextureFlip_NONE
 				case sdl.K_e:
-					flip = engine.TextureRenderFlip_VERTICAL
+					flip = engine.RenderTextureFlip_VERTICAL
 				}
 			}
 		}
@@ -77,7 +78,7 @@ func main() {
 		// Render texture
 		err = window.Renderer.RenderTexture(
 			engine.RenderContext{},
-			&arrowTexture,
+			arrowTexture,
 			x, y,
 			&engine.RenderTextureOptions{Flip: flip, Angle: angle},
 		)

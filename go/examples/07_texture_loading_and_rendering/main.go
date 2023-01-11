@@ -24,12 +24,11 @@ func main() {
 	defer engine.Quit()
 
 	// Create window
-	window, err := engine.CreateWindow(false)
+	window, err := engine.NewWindow(640, 480, false)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create window")
 		return
 	}
-	defer window.Destroy()
 
 	// Load surface
 	surface, err := window.LoadSurface("../../../resources/images/texture.png")
@@ -39,7 +38,7 @@ func main() {
 	}
 
 	// Convert surface to texture
-	texture, err := window.ConvertSurfaceToTexture(surface)
+	texture, err := window.Renderer.SurfaceToTexture(surface)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert surface to texture")
 		return
@@ -53,7 +52,7 @@ func main() {
 		}
 
 		// Render texture
-		err = window.Renderer.RenderTexture(engine.RenderContext{}, &texture, 0, 0, nil)
+		err = window.Renderer.RenderTexture(engine.RenderContext{}, texture, 0, 0, nil)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to render texture")
 			return false
