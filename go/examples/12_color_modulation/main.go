@@ -44,7 +44,7 @@ func main() {
 		return
 	}
 
-	color := engine.ColorByName[engine.ColorName_WHITE]
+	color := engine.Color_WHITE
 
 	engine.EventLoop(func(getEvent func() sdl.Event) bool {
 		for sdlEvent := getEvent(); sdlEvent != nil; sdlEvent = getEvent() {

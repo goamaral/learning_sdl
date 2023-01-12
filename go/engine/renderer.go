@@ -47,7 +47,7 @@ func newRenderer(sdlRenderer *sdl.Renderer) *Renderer {
 	return rendererManager.Save(&Renderer{
 		sdlRenderer:      sdlRenderer,
 		defaultViewport:  NewViewportFromSdlRect(sdlRenderer.GetViewport()),
-		defaultDrawColor: ColorByName[ColorName_BLACK],
+		defaultDrawColor: Color_BLACK,
 	}).(*Renderer)
 }
 
@@ -86,11 +86,19 @@ func (r *Renderer) Destroy() {
 	}
 }
 
-func (r Renderer) Reset() error {
-	// Reset draw color
-	err := r.setDrawColor(r.defaultDrawColor)
+func (r Renderer) Reset(opts ...RenderOption) error {
+	// Apply renderer options
+	appliedOpts, err := r.ApplyOptions(opts...)
 	if err != nil {
-		return errors.Wrap(err, "failed to reset renderer draw color")
+		return err
+	}
+
+	// Reset draw color, if not already set by RenderOption_SetBackgroundColor
+	if _, applied := appliedOpts[RenderOptionName_SetBackgroundColor]; !applied {
+		err := r.setDrawColor(r.defaultDrawColor)
+		if err != nil {
+			return errors.Wrap(err, "failed to reset renderer draw color")
+		}
 	}
 
 	// Reset viewport
@@ -103,6 +111,12 @@ func (r Renderer) Reset() error {
 	err = r.sdlRenderer.Clear()
 	if err != nil {
 		return errors.Wrap(err, "failed to reset renderer")
+	}
+
+	// Set default draw color
+	err = r.setDrawColor(r.defaultDrawColor)
+	if err != nil {
+		return errors.Wrap(err, "failed to reset renderer draw color")
 	}
 
 	return nil
@@ -232,4 +246,21 @@ func (r Renderer) RenderPoint(ctx RenderContext, x, y int32) error {
 	}
 
 	return nil
+}
+
+func (r Renderer) TextToTexture(text string, font *Font, color Color) (*Texture, error) {
+	// Text to surface
+	sdlSurface, err := font.sdlFont.RenderUTF8Solid(text, sdl.Color(color))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to render text surface")
+	}
+	defer sdlSurface.Free()
+
+	// Surface to texture
+	sdlTexture, err := r.sdlRenderer.CreateTextureFromSurface(sdlSurface)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create texture from surface")
+	}
+
+	return newTexture(sdlTexture, sdlSurface.W, sdlSurface.H), nil
 }

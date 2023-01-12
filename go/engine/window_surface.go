@@ -9,7 +9,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-// Supports bmp, png)
+// Supports bmp, png
 func (w *Window) LoadSurface(path string) (*Surface, error) {
 	pathParts := strings.Split(path, ".")
 	extension := pathParts[len(pathParts)-1]
@@ -28,7 +28,7 @@ func (w *Window) LoadSurface(path string) (*Surface, error) {
 			return nil, errors.Wrap(err, "failed to load png surface")
 		}
 	default:
-		return nil, errors.Errorf("unsupported surface format %s")
+		return nil, errors.Errorf("unsupported surface file format %s")
 	}
 
 	surface := newSurface(sdlSurface, w)

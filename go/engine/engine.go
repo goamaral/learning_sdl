@@ -1,12 +1,20 @@
 package engine
 
 import (
+	"github.com/pkg/errors"
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 // Init engine
 func Init() error {
-	return sdl.Init(sdl.INIT_EVERYTHING)
+	if err := ttf.Init(); err != nil {
+		return errors.Wrap(err, "failed to initialize sdl ttf api")
+	}
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		return errors.Wrap(err, "failed to initialize sdl")
+	}
+	return nil
 }
 
 // Quit engine

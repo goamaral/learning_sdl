@@ -37,9 +37,8 @@ func main() {
 		}
 
 		// Render red rectangle fill
-		redColor := engine.ColorByName[engine.ColorName_RED]
 		err = window.Renderer.RenderRectangle(
-			engine.RenderContext{DrawColor: &redColor},
+			engine.RenderContext{DrawColor: &engine.Color_RED},
 			(engine.Rectangle)(sdl.Rect{X: window.W / 4, Y: window.H / 4, W: window.W / 2, H: window.H / 2}),
 			engine.RenderGeometryMode_FILL,
 		)
@@ -49,9 +48,8 @@ func main() {
 		}
 
 		// Render green rectangle outline
-		greenColor := engine.ColorByName[engine.ColorName_GREEN]
 		err = window.Renderer.RenderRectangle(
-			engine.RenderContext{DrawColor: &greenColor},
+			engine.RenderContext{DrawColor: &engine.Color_GREEN},
 			(engine.Rectangle)(sdl.Rect{X: window.W / 6, Y: window.H / 6, W: window.W * 2 / 3, H: window.H * 2 / 3}),
 			engine.RenderGeometryMode_OUTLINE,
 		)
@@ -61,9 +59,8 @@ func main() {
 		}
 
 		// Render horizontal blue line
-		blueColor := engine.ColorByName[engine.ColorName_BLUE]
 		err = window.Renderer.RenderLine(
-			engine.RenderContext{DrawColor: &blueColor},
+			engine.RenderContext{DrawColor: &engine.Color_BLUE},
 			0, window.H/2, window.W, window.H/2,
 		)
 		if err != nil {
@@ -72,10 +69,9 @@ func main() {
 		}
 
 		// Render yellow dots to create intermittent vertical line
-		yellowColor := engine.ColorByName[engine.ColorName_YELLOW]
 		var i int32 = 0
 		for ; i < window.H; i += 4 {
-			err = window.Renderer.RenderPoint(engine.RenderContext{DrawColor: &yellowColor}, window.W/2, i)
+			err = window.Renderer.RenderPoint(engine.RenderContext{DrawColor: &engine.Color_YELLOW}, window.W/2, i)
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to render yellow dots to create intermittent vertical line")
 				return false

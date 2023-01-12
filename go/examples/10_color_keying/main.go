@@ -42,7 +42,7 @@ func main() {
 	}
 
 	// Set player surface transparent color
-	playerSurface.SetTransparentColor(engine.ColorByName[engine.ColorName_CYAN])
+	playerSurface.SetTransparentColor(engine.Color_CYAN)
 
 	// Convert surfaces to textures
 	backgroundTexture, err := window.Renderer.SurfaceToTexture(backgroundSurface)
